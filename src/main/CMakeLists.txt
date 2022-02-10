@@ -67,8 +67,10 @@ ADD_LIBRARY(
 
     ${CMAKE_CURRENT_SOURCE_DIR}/AbstractApduCommand.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/AbstractCardCommand.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/AbstractSamCommand.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ApduRequestAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardCommand.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoSamCommand.cpp
 )
 
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${KEYPLE_UTIL_LIB})

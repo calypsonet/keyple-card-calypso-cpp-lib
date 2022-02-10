@@ -55,7 +55,7 @@ std::map<int, std::shared_ptr<StatusProperties>> AbstractApduCommand::STATUS_TAB
     {0x9000, std::make_shared<StatusProperties>("Success")},
 };
 
-AbstractApduCommand::AbstractApduCommand(const CardCommand& commandRef)
+AbstractApduCommand::AbstractApduCommand(CardCommand& commandRef)
 : mCommandRef(commandRef), mName(commandRef.getName()) {}
 
 void AbstractApduCommand::addSubName(const std::string& subName)
@@ -64,7 +64,7 @@ void AbstractApduCommand::addSubName(const std::string& subName)
     mApduRequest->setInfo(mName);
 }
 
-const CardCommand& AbstractApduCommand::getCommandRef() const
+CardCommand& AbstractApduCommand::getCommandRef() const
 {
     return mCommandRef;
 }
@@ -98,23 +98,23 @@ const std::shared_ptr<ApduResponseApi> AbstractApduCommand::getApduResponse() co
     return mApduResponse;
 }
 
-const std::map<int, std::shared_ptr<StatusProperties>> AbstractApduCommand::getStatusTable() const
+const std::map<int, std::shared_ptr<StatusProperties>>& AbstractApduCommand::getStatusTable() const
 {
     return STATUS_TABLE;
 }
 
-std::shared_ptr<CalypsoApduCommandException> AbstractApduCommand::buildCommandException(
+const std::shared_ptr<CalypsoApduCommandException> AbstractApduCommand::buildCommandException(
     const std::type_info& exceptionClass,
     const std::string& message,
-    const CardCommand& commandRef,
+    CardCommand& commandRef,
     const int statusWord) const
 {
     (void)exceptionClass;
 
+    const auto sw = std::make_shared<int>(statusWord);
+
     return std::shared_ptr<CardCommandUnknownStatusException>(
-               new CardCommandUnknownStatusException(message,
-                                                     commandRef,
-                                                     std::make_shared<int>(statusWord)));
+               new CardCommandUnknownStatusException(message, commandRef, sw));
 }
 
 const std::shared_ptr<StatusProperties> AbstractApduCommand::getStatusWordProperties() const
@@ -149,7 +149,7 @@ void AbstractApduCommand::checkStatus()
     const std::string message = props != nullptr ? props->getInformation() : "Unknown status";
 
     /* Status word */
-    int statusWord = mApduResponse->getStatusWord();
+    const int statusWord = mApduResponse->getStatusWord();
 
     /* Throw the exception */
     throw buildCommandException(exceptionClass, message, mCommandRef, statusWord);

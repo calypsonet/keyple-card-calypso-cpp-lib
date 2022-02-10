@@ -30,57 +30,60 @@ namespace keyple {
 namespace card {
 namespace calypso {
 
-AbstractCardCommand::AbstractCardCommand(const CalypsoCardCommand& commandRef)
+AbstractCardCommand::AbstractCardCommand(CalypsoCardCommand& commandRef)
 : AbstractApduCommand(commandRef) {}
 
-const CalypsoCardCommand& AbstractCardCommand::getCommandRef() const
+CalypsoCardCommand& AbstractCardCommand::getCommandRef() const
 {
-    return AbstractApduCommand::getCommandRef();
+    return dynamic_cast<CalypsoCardCommand&>(AbstractApduCommand::getCommandRef());
 }
 
-const std::shared_ptr<CalypsoApduCommandException> buildCommandException(
+const std::shared_ptr<CalypsoApduCommandException> AbstractCardCommand::buildCommandException(
     const std::type_info& exceptionClass,
     const std::string& message,
-    const CardCommand& commandRef,
-    const std::shared_ptr<int> statusWord) {
+    CardCommand& commandRef,
+    const int statusWord) const {
+
+    const auto& command = dynamic_cast<CalypsoCardCommand&>(commandRef);
+    const auto sw = std::make_shared<int>(statusWord);
 
     if (exceptionClass == typeid(CardAccessForbiddenException)) {
-        return std::make_shared<CardAccessForbiddenException>(message, commandRef, statusWord);
+        return std::make_shared<CardAccessForbiddenException>(message, command, sw);
     } else if (exceptionClass == typeid(CardDataAccessException)) {
-        return std::make_shared<CardDataAccessException>(message, commandRef, statusWord);
+        return std::make_shared<CardDataAccessException>(message, command, sw);
     } else if (exceptionClass == typeid(CardDataOutOfBoundsException)) {
-        return std::make_shared<CardDataOutOfBoundsException>(message, commandRef, statusWord);
+        return std::make_shared<CardDataOutOfBoundsException>(message, command, sw);
     } else if (exceptionClass == typeid(CardIllegalArgumentException)) {
-        return std::make_shared<CardIllegalArgumentException>(message, commandRef);
+        return std::make_shared<CardIllegalArgumentException>(message, command);
     } else if (exceptionClass == typeid(CardIllegalParameterException)) {
-        return std::make_shared<CardIllegalParameterException>(message, commandRef, statusWord);
+        return std::make_shared<CardIllegalParameterException>(message, command, sw);
     } else if (exceptionClass == typeid(CardPinException)) {
-        return std::make_shared<CardPinException>(message, commandRef, statusWord);
+        return std::make_shared<CardPinException>(message, command, sw);
     } else if (exceptionClass == typeid(CardSecurityContextException)) {
-        return std::make_shared<CardSecurityContextException>(message, commandRef, statusWord);
+        return std::make_shared<CardSecurityContextException>(message, command, sw);
     } else if (exceptionClass == typeid(CardSecurityDataException)) {
-        return std::make_shared<CardSecurityDataException>(message, commandRef, statusWord);
+        return std::make_shared<CardSecurityDataException>(message, command, sw);
     } else if (exceptionClass == typeid(CardSessionBufferOverflowException)) {
-        return std::make_shared<CardSessionBufferOverflowException>(message, commandRef, statusWord);
+        return std::make_shared<CardSessionBufferOverflowException>(message, command, sw);
     } else if (exceptionClass == typeid(CardTerminatedException)) {
-        return std::make_shared<CardTerminatedException>(message, commandRef, statusWord);
+        return std::make_shared<CardTerminatedException>(message, command, sw);
     } else {
-        return std::make_shared<CardUnknownStatusException>(message, commandRef, statusWord);
+        return std::make_shared<CardUnknownStatusException>(message, command, sw);
     }
 }
 
 AbstractCardCommand& AbstractCardCommand::setApduResponse(
     const std::shared_ptr<ApduResponseApi> apduResponse)
 {
-    return AbstractApduCommand::setApduResponse(apduResponse);
+    return dynamic_cast<AbstractCardCommand&>(AbstractApduCommand::setApduResponse(apduResponse));
 }
 
 void AbstractCardCommand::checkStatus()
 {
     try {
         AbstractApduCommand::checkStatus();
-    } catch (const CalypsoApduCommandException& e) {
-        throw CardCommandException(e);
+    } catch (CalypsoApduCommandException& e) {
+        throw dynamic_cast<CardCommandException&>(e);
     }
 }
 

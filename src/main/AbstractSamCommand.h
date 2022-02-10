@@ -12,22 +12,42 @@
 
 #pragma once
 
+#include <map>
+
 /* Keyple Card Calypso */
 #include "AbstractApduCommand.h"
-#include "CalypsoCardCommand.h"
+#include "CalypsoSamCommand.h"
 
 namespace keyple {
 namespace card {
 namespace calypso {
 
+
+using StatusProperties = AbstractApduCommand::StatusProperties;
+
 /**
  * (package-private)<br>
- * Superclass for all card commands.
+ * Superclass for all SAM command.
  *
  * @since 2.0.1
  */
-class AbstractCardCommand : public AbstractApduCommand {
+class AbstractSamCommand : public AbstractApduCommand {
 public:
+    /**
+     * (package-private)<br>
+     * Default SAM product type.
+     *
+     * @since 2.0.1
+     */
+    static const std::map<int, std::shared_ptr<StatusProperties>> STATUS_TABLE;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 2.0.1
+     */
+    const std::map<int, std::shared_ptr<StatusProperties>>& getStatusTable() const override;
+
     /**
      * (package-private)<br>
      * Constructor dedicated for the building of referenced Calypso commands
@@ -35,25 +55,14 @@ public:
      * @param commandRef a command reference from the Calypso command table.
      * @since 2.0.1
      */
-    AbstractCardCommand(CalypsoCardCommand& commandRef);
+    AbstractSamCommand(CalypsoSamCommand& commandRef);
 
     /**
      * {@inheritDoc}
      *
      * @since 2.0.1
      */
-    CalypsoCardCommand& getCommandRef() const override;
-
-    /**
-     * (package-private)<br>
-     * Indicates if the session buffer is used when executing this command.
-     *
-     * <p>Allows the management of the overflow of this buffer.
-     *
-     * @return True if this command uses the session buffer
-     * @since 2.0.1
-     */
-    virtual bool isSessionBufferUsed() = 0;
+    CalypsoSamCommand& getCommandRef() const override;
 
     /**
      * {@inheritDoc}
@@ -71,8 +80,8 @@ public:
      *
      * @since 2.0.1
      */
-    AbstractCardCommand& setApduResponse(const std::shared_ptr<ApduResponseApi> apduResponse)
-        override;
+    AbstractSamCommand& setApduResponse(
+        const std::shared_ptr<ApduResponseApi> apduResponse) override;
 
     /**
      * {@inheritDoc}
