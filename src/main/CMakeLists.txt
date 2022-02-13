@@ -14,15 +14,16 @@ SET(LIBRARY_NAME keyplecardcalypsocpplib)
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKEYPLECARDCALYPSO_EXPORT")
 
-SET(CALYPSONET_CARD_DIR    "../../../calypsonet-terminal-card-cpp-api")
-SET(CALYPSONET_READER_DIR  "../../../calypsonet-terminal-reader-cpp-api")
-SET(CALYPSONET_CALYPSO_DIR "../../../calypsonet-terminal-calypso-cpp-api")
-SET(KEYPLE_COMMON_DIR      "../../../keyple-common-cpp-api")
-SET(KEYPLE_PLUGIN_DIR      "../../../keyple-plugin-cpp-api")
-SET(KEYPLE_UTIL_DIR        "../../../keyple-util-cpp-lib")
-SET(KEYPLE_SERVICE_DIR     "../../../keyple-service-cpp-lib")
-SET(KEYPLE_RESOURCE_DIR    "../../../keyple-service-resource-cpp-lib")
-SET(KEYPLE_UTIL_LIB        "keypleutilcpplib")
+SET(CALYPSONET_CARD_DIR     "../../../calypsonet-terminal-card-cpp-api")
+SET(CALYPSONET_READER_DIR   "../../../calypsonet-terminal-reader-cpp-api")
+SET(CALYPSONET_CALYPSO_DIR  "../../../calypsonet-terminal-calypso-cpp-api")
+SET(KEYPLE_CARD_GENERIC_DIR "../../../keyple-card-generic-cpp-lib")
+SET(KEYPLE_COMMON_DIR       "../../../keyple-common-cpp-api")
+SET(KEYPLE_PLUGIN_DIR       "../../../keyple-plugin-cpp-api")
+SET(KEYPLE_UTIL_DIR         "../../../keyple-util-cpp-lib")
+SET(KEYPLE_SERVICE_DIR      "../../../keyple-service-cpp-lib")
+SET(KEYPLE_RESOURCE_DIR     "../../../keyple-service-resource-cpp-lib")
+SET(KEYPLE_UTIL_LIB         "keypleutilcpplib")
 
 INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -40,6 +41,9 @@ INCLUDE_DIRECTORIES(
     ${CALYPSONET_CALYPSO_DIR}/src/main
     ${CALYPSONET_CALYPSO_DIR}/src/main/card
     ${CALYPSONET_CALYPSO_DIR}/src/main/sam
+    ${CALYPSONET_CALYPSO_DIR}/src/main/transaction
+
+    ${KEYPLE_CARD_GENERIC_DIR}/src/main
 
     ${KEYPLE_COMMON_DIR}/src/main
 
@@ -69,8 +73,20 @@ ADD_LIBRARY(
     ${CMAKE_CURRENT_SOURCE_DIR}/AbstractCardCommand.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/AbstractSamCommand.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ApduRequestAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardClass.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardCommand.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardConstant.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoSamCommand.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CardCommandManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CardRequestAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CardSelectorAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ElementaryFileAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/FileDataAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/FileHeaderAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SvDebitLogRecordAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SvLoadLogRecordAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SvDebitLogRecordJsonDeserializerAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SvLoadLogRecordJsonDeserializerAdapter.cpp
 )
 
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${KEYPLE_UTIL_LIB})

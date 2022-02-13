@@ -30,6 +30,9 @@ namespace calypso {
  */
 class CalypsoCardCommand : public CardCommand {
 public:
+    /** no command yet */
+    static const CalypsoCardCommand NONE;
+
     /** get data. */
     static const CalypsoCardCommand GET_DATA;
 
@@ -111,16 +114,36 @@ public:
     /** rehabilitate */
     static const CalypsoCardCommand REHABILITATE;
 
+    /**
+     *
+     */
+    bool operator==(const CalypsoCardCommand& o) const;
+
+    /**
+     *
+     */
+    bool operator!=(const CalypsoCardCommand& o) const;
+
+    /**
+     *
+     */
+    void operator=(const CalypsoCardCommand& o);
+
+    /**
+     *
+     */
+    CalypsoCardCommand(const CalypsoCardCommand& o);
+
 private:
     /**
      * The command name
      */
-    const std::string mName;
+    std::string mName;
 
     /**
      * The instruction byte
      */
-    const uint8_t mInstructionByte;
+    uint8_t mInstructionByte;
 
     /**
      * The generic constructor of CalypsoCommands.
@@ -139,10 +162,7 @@ private:
      */
     const std::string& getName() const;
 
-    /**
-     * Gets the instruction byte (INS).
-     *
-     * @return A byte
+    /**default
      * @since 2.0.0
      */
     uint8_t getInstructionByte() const;

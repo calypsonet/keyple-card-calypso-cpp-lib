@@ -16,6 +16,7 @@ namespace keyple {
 namespace card {
 namespace calypso {
 
+const CalypsoCardCommand CalypsoCardCommand::NONE("None", 0x00);
 const CalypsoCardCommand CalypsoCardCommand::GET_DATA("Get Data", 0xCA);
 const CalypsoCardCommand CalypsoCardCommand::OPEN_SESSION("Open Secure Session", 0x8A);
 const CalypsoCardCommand CalypsoCardCommand::CLOSE_SESSION("Close Secure Session", 0x8E);
@@ -47,6 +48,9 @@ const CalypsoCardCommand CalypsoCardCommand::REHABILITATE("Invalidate", 0x44);
 CalypsoCardCommand::CalypsoCardCommand(const std::string& name, const uint8_t instructionByte)
 : mName(name), mInstructionByte(instructionByte) {}
 
+CalypsoCardCommand::CalypsoCardCommand(const CalypsoCardCommand& o)
+: mName(o.mName), mInstructionByte(o.mInstructionByte) {}
+
 const std::string& CalypsoCardCommand::getName() const
 {
     return mName;
@@ -55,6 +59,23 @@ const std::string& CalypsoCardCommand::getName() const
 uint8_t CalypsoCardCommand::getInstructionByte() const
 {
     return mInstructionByte;
+}
+
+bool CalypsoCardCommand::operator==(const CalypsoCardCommand& o) const
+{
+    return mName == o.mName &&
+           mInstructionByte == o.mInstructionByte;
+}
+
+bool CalypsoCardCommand::operator!=(const CalypsoCardCommand& o) const
+{
+    return !(*this == o);
+}
+
+void CalypsoCardCommand::operator=(const CalypsoCardCommand& o)
+{
+    mName = o.mName;
+    mInstructionByte = o.mInstructionByte;
 }
 
 }
