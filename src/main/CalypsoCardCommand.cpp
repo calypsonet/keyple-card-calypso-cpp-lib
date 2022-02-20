@@ -72,10 +72,12 @@ bool CalypsoCardCommand::operator!=(const CalypsoCardCommand& o) const
     return !(*this == o);
 }
 
-void CalypsoCardCommand::operator=(const CalypsoCardCommand& o)
+CalypsoCardCommand& CalypsoCardCommand::operator=(const CalypsoCardCommand& o)
 {
     mName = o.mName;
     mInstructionByte = o.mInstructionByte;
+
+    return *this;
 }
 
 }

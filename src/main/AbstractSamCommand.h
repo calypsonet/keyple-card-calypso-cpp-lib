@@ -39,14 +39,15 @@ public:
      *
      * @since 2.0.1
      */
-    static const std::map<int, std::shared_ptr<StatusProperties>> STATUS_TABLE;
+    static const std::map<const int, const std::shared_ptr<StatusProperties>> STATUS_TABLE;
 
     /**
      * {@inheritDoc}
      *
      * @since 2.0.1
      */
-    const std::map<int, std::shared_ptr<StatusProperties>>& getStatusTable() const override;
+    const std::map<const int, const std::shared_ptr<StatusProperties>>& getStatusTable() const
+        override;
 
     /**
      * (package-private)<br>
@@ -55,14 +56,14 @@ public:
      * @param commandRef a command reference from the Calypso command table.
      * @since 2.0.1
      */
-    AbstractSamCommand(CalypsoSamCommand& commandRef);
+    AbstractSamCommand(const CalypsoSamCommand& commandRef);
 
     /**
      * {@inheritDoc}
      *
      * @since 2.0.1
      */
-    CalypsoSamCommand& getCommandRef() const override;
+    const CalypsoSamCommand& getCommandRef() const override;
 
     /**
      * {@inheritDoc}
@@ -72,7 +73,7 @@ public:
     const std::shared_ptr<CalypsoApduCommandException> buildCommandException(
         const std::type_info& exceptionClass,
         const std::string& message,
-        CardCommand& commandRef,
+        const CardCommand& commandRef,
         const int statusWord) const final;
 
     /**

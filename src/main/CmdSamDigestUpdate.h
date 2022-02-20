@@ -12,74 +12,66 @@
 
 #pragma once
 
+#include <cstdint>
+#include <map>
+#include <vector>
+
+/* Calypsonet Terminal Calypso */
+#include "CalypsoSam.h"
+
 /* Keyple Card Calypso */
-#include "AbstractApduCommand.h"
-#include "CalypsoCardCommand.h"
+#include "AbstractSamCommand.h"
+#include "CalypsoSamCommand.h"
 
 namespace keyple {
 namespace card {
 namespace calypso {
 
+using namespace calypsonet::terminal::calypso::sam;
+
 /**
  * (package-private)<br>
- * Superclass for all card commands.
+ * Builds the Digest Update APDU command.
+ *
+ * <p>This command have to be sent twice for each command executed during a session. First time for
+ * the command sent and second time for the answer received.
  *
  * @since 2.0.1
  */
-class AbstractCardCommand : public AbstractApduCommand {
+class CmdSamDigestUpdate final : public AbstractSamCommand {
 public:
     /**
      * (package-private)<br>
-     * Constructor dedicated for the building of referenced Calypso commands
+     * Instantiates a new CmdSamDigestUpdate.
      *
-     * @param commandRef a command reference from the Calypso command table.
+     * @param productType of the SAM.
+     * @param encryptedSession the encrypted session flag, true if encrypted.
+     * @param digestData all bytes from command sent by the card or response from the command.
+     * @throws IllegalArgumentException If the digest data is null or has a length &gt; 255
      * @since 2.0.1
      */
-    AbstractCardCommand(const CalypsoCardCommand& commandRef);
+    CmdSamDigestUpdate(const CalypsoSam::ProductType productType,
+                       const bool encryptedSession,
+                       const std::vector<uint8_t>& digestData);
 
     /**
      * {@inheritDoc}
      *
      * @since 2.0.1
      */
-    const CalypsoCardCommand& getCommandRef() const override;
-
-    /**
-     * (package-private)<br>
-     * Indicates if the session buffer is used when executing this command.
-     *
-     * <p>Allows the management of the overflow of this buffer.
-     *
-     * @return True if this command uses the session buffer
-     * @since 2.0.1
-     */
-    virtual bool isSessionBufferUsed() const = 0;
-
-    /**
-     * {@inheritDoc}
-     *
-     * @since 2.0.1
-     */
-    const std::shared_ptr<CalypsoApduCommandException> buildCommandException(
-        const std::type_info& exceptionClass,
-        const std::string& message,
-        const CardCommand& commandRef,
-        const int statusWord) const final;
-
-    /**
-     * {@inheritDoc}
-     *
-     * @since 2.0.1
-     */
-    AbstractCardCommand& setApduResponse(const std::shared_ptr<ApduResponseApi> apduResponse)
+    const std::map<const int, const std::shared_ptr<StatusProperties>>& getStatusTable() const
         override;
 
+private:
     /**
-     * {@inheritDoc}
-     *
-     * @since 2.0.1
+     * The command
      */
-    void checkStatus() override;
+    static const CalypsoSamCommand mCommand;
+
+    /**
+     *
+     */
+    static const std::map<const int, const std::shared_ptr<StatusProperties>> STATUS_TABLE;
 };
 
 }

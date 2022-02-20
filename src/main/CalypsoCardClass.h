@@ -13,6 +13,7 @@
 #pragma once
 
 #include <cstdint>
+#include <ostream>
 
 namespace keyple {
 namespace card {
@@ -27,6 +28,9 @@ namespace calypso {
  */
 class CalypsoCardClass {
 public:
+    /** Dummy init value */
+    static const CalypsoCardClass UNKNOWN;
+
     /** Calypso product type 1/2 / B Prime protocol, regular commands */
     static const CalypsoCardClass LEGACY;
 
@@ -37,6 +41,11 @@ public:
     static const CalypsoCardClass ISO;
 
     /**
+     *
+     */
+    CalypsoCardClass(const CalypsoCardClass& o);
+
+    /**
      * Gets the class byte.
      *
      * @return A byte
@@ -44,11 +53,21 @@ public:
      */
     uint8_t getValue() const;
 
+    /**
+     *
+     */
+    CalypsoCardClass& operator=(const CalypsoCardClass& o);
+
+    /**
+     *
+     */
+    friend std::ostream& operator<<(std::ostream& os, const CalypsoCardClass& ccc);
+
 private:
     /**
      *
      */
-    const uint8_t mCla;
+    uint8_t mCla;
 
     /**
      * Constructor

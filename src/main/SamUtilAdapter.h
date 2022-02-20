@@ -10,49 +10,40 @@
  * SPDX-License-Identifier: EPL-2.0                                                               *
  **************************************************************************************************/
 
-#include "CalypsoCardClass.h"
+#pragma once
+
+/* Calypsonet Terminal Calypso */
+#include "CalypsoSam.h"
 
 namespace keyple {
 namespace card {
 namespace calypso {
 
-const CalypsoCardClass CalypsoCardClass::LEGACY(0x94);
-const CalypsoCardClass CalypsoCardClass::LEGACY_STORED_VALUE(0xFA);
-const CalypsoCardClass CalypsoCardClass::ISO(0x00);
-const CalypsoCardClass CalypsoCardClass::UNKNOWN(0xff);
+using namespace calypsonet::terminal::calypso::sam;
 
-CalypsoCardClass::CalypsoCardClass(const uint8_t cla) : mCla(cla) {}
+using ProductType = CalypsoSam::ProductType;
 
-CalypsoCardClass::CalypsoCardClass(const CalypsoCardClass& o) : CalypsoCardClass(o.mCla) {}
+/**
+ * (package-private)<br>
+ */
+class SamUtilAdapter final {
+public:
+    /**
+     * (package-private)<br>
+     * Get the class byte to use for the provided product type.
+     *
+     * @param productType The SAM product type.
+     * @return A byte.
+     * @since 2.0.0
+     */
+    static uint8_t getClassByte(const ProductType productType);
 
-uint8_t CalypsoCardClass::getValue() const
-{
-    return mCla;
-}
-
-CalypsoCardClass& CalypsoCardClass::operator=(const CalypsoCardClass& o)
-{
-    this->mCla = o.mCla;
-
-    return *this;
-}
-
-std::ostream& operator<<(std::ostream& os, const CalypsoCardClass& ccc)
-{
-    os << "CALYPSO_CARD_CLASS: ";
-
-    if (ccc.getValue() == CalypsoCardClass::ISO.getValue()) {
-        os << "ISO";
-    } else if (ccc.getValue() == CalypsoCardClass::LEGACY.getValue()) {
-        os << "LEGACY";
-    } else if (ccc.getValue() == CalypsoCardClass::LEGACY_STORED_VALUE.getValue()) {
-        os << "LEGACY_STORED_VALUE";
-    } else {
-        os << "UNKNOWN";
-    }
-
-    return os;
-}
+private:
+    /**
+     * Constructor
+     */
+    SamUtilAdapter();
+};
 
 }
 }

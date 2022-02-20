@@ -126,7 +126,7 @@ public:
      *
      * @since 2.0.1
      */
-    static std::map<int, std::shared_ptr<StatusProperties>> STATUS_TABLE;
+    static const std::map<const int, const std::shared_ptr<StatusProperties>> STATUS_TABLE;
 
     /**
      * (package-private)<br>
@@ -135,7 +135,7 @@ public:
      * @param commandRef The command reference.
      * @since 2.0.1
      */
-    AbstractApduCommand(CardCommand& commandRef);
+    AbstractApduCommand(const CardCommand& commandRef);
 
     /**
      * (package-private)<br>
@@ -157,7 +157,7 @@ public:
      * @return A not null reference.
      * @since 2.0.1
      */
-    virtual CardCommand& getCommandRef() const;
+    virtual const CardCommand& getCommandRef() const;
 
     /**
      * (package-private)<br>
@@ -213,7 +213,8 @@ public:
      * @return A not null reference
      * @since 2.0.1
      */
-    virtual const std::map<int, std::shared_ptr<StatusProperties>>& getStatusTable() const;
+    virtual const std::map<const int, const std::shared_ptr<StatusProperties>>& getStatusTable()
+        const;
 
     /**
      * (package-private)<br>
@@ -231,7 +232,7 @@ public:
     virtual const std::shared_ptr<CalypsoApduCommandException> buildCommandException(
         const std::type_info& exceptionClass,
         const std::string& message,
-        CardCommand& commandRef,
+        const CardCommand& commandRef,
         const int statusWord) const;
 
     /**
@@ -267,7 +268,7 @@ private:
     /**
      *
      */
-    CardCommand& mCommandRef;
+    const CardCommand& mCommandRef;
 
     /**
      *

@@ -30,21 +30,21 @@ namespace keyple {
 namespace card {
 namespace calypso {
 
-AbstractCardCommand::AbstractCardCommand(CalypsoCardCommand& commandRef)
+AbstractCardCommand::AbstractCardCommand(const CalypsoCardCommand& commandRef)
 : AbstractApduCommand(commandRef) {}
 
-CalypsoCardCommand& AbstractCardCommand::getCommandRef() const
+const CalypsoCardCommand& AbstractCardCommand::getCommandRef() const
 {
-    return dynamic_cast<CalypsoCardCommand&>(AbstractApduCommand::getCommandRef());
+    return dynamic_cast<const CalypsoCardCommand&>(AbstractApduCommand::getCommandRef());
 }
 
 const std::shared_ptr<CalypsoApduCommandException> AbstractCardCommand::buildCommandException(
     const std::type_info& exceptionClass,
     const std::string& message,
-    CardCommand& commandRef,
+    const CardCommand& commandRef,
     const int statusWord) const {
 
-    const auto& command = dynamic_cast<CalypsoCardCommand&>(commandRef);
+    const auto& command = dynamic_cast<const CalypsoCardCommand&>(commandRef);
     const auto sw = std::make_shared<int>(statusWord);
 
     if (exceptionClass == typeid(CardAccessForbiddenException)) {

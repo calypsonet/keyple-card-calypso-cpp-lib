@@ -127,12 +127,17 @@ public:
     /**
      *
      */
-    void operator=(const CalypsoCardCommand& o);
+    CalypsoCardCommand& operator=(const CalypsoCardCommand& o);
 
     /**
      *
      */
     CalypsoCardCommand(const CalypsoCardCommand& o);
+
+    /**default
+     * @since 2.0.0
+     */
+    uint8_t getInstructionByte() const;
 
 private:
     /**
@@ -161,11 +166,6 @@ private:
      * @since 2.0.0
      */
     const std::string& getName() const;
-
-    /**default
-     * @since 2.0.0
-     */
-    uint8_t getInstructionByte() const;
 };
 
 }

@@ -10,49 +10,21 @@
  * SPDX-License-Identifier: EPL-2.0                                                               *
  **************************************************************************************************/
 
-#include "CalypsoCardClass.h"
+#include "SamUtilAdapter.h"
 
 namespace keyple {
 namespace card {
 namespace calypso {
 
-const CalypsoCardClass CalypsoCardClass::LEGACY(0x94);
-const CalypsoCardClass CalypsoCardClass::LEGACY_STORED_VALUE(0xFA);
-const CalypsoCardClass CalypsoCardClass::ISO(0x00);
-const CalypsoCardClass CalypsoCardClass::UNKNOWN(0xff);
+SamUtilAdapter::SamUtilAdapter() {}
 
-CalypsoCardClass::CalypsoCardClass(const uint8_t cla) : mCla(cla) {}
-
-CalypsoCardClass::CalypsoCardClass(const CalypsoCardClass& o) : CalypsoCardClass(o.mCla) {}
-
-uint8_t CalypsoCardClass::getValue() const
+uint8_t SamUtilAdapter::getClassByte(const ProductType productType)
 {
-    return mCla;
-}
-
-CalypsoCardClass& CalypsoCardClass::operator=(const CalypsoCardClass& o)
-{
-    this->mCla = o.mCla;
-
-    return *this;
-}
-
-std::ostream& operator<<(std::ostream& os, const CalypsoCardClass& ccc)
-{
-    os << "CALYPSO_CARD_CLASS: ";
-
-    if (ccc.getValue() == CalypsoCardClass::ISO.getValue()) {
-        os << "ISO";
-    } else if (ccc.getValue() == CalypsoCardClass::LEGACY.getValue()) {
-        os << "LEGACY";
-    } else if (ccc.getValue() == CalypsoCardClass::LEGACY_STORED_VALUE.getValue()) {
-        os << "LEGACY_STORED_VALUE";
-    } else {
-        os << "UNKNOWN";
+    if (productType == ProductType::SAM_S1DX) {
+        return 0x94;
     }
-
-    return os;
-}
+        return 0x80;
+    }
 
 }
 }

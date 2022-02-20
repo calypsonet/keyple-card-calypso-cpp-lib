@@ -12,74 +12,69 @@
 
 #pragma once
 
+#include <cstdint>
+#include <map>
+#include <vector>
+
+/* Calypsonet Terminal Calypso */
+#include "CalypsoSam.h"
+
 /* Keyple Card Calypso */
-#include "AbstractApduCommand.h"
-#include "CalypsoCardCommand.h"
+#include "AbstractSamCommand.h"
 
 namespace keyple {
 namespace card {
 namespace calypso {
 
+using namespace calypsonet::terminal::calypso::sam;
+
 /**
  * (package-private)<br>
- * Superclass for all card commands.
+ * Builds the Get Challenge APDU command.
  *
  * @since 2.0.1
  */
-class AbstractCardCommand : public AbstractApduCommand {
+class CmdSamGetChallenge final : public AbstractSamCommand {
 public:
     /**
      * (package-private)<br>
-     * Constructor dedicated for the building of referenced Calypso commands
+     * Instantiates a new CmdSamGetChallenge.
      *
-     * @param commandRef a command reference from the Calypso command table.
+     * @param productType the SAM product type.
+     * @param expectedResponseLength the expected response length.
+     * @throws IllegalArgumentException If the expected response length has wrong value.
      * @since 2.0.1
      */
-    AbstractCardCommand(const CalypsoCardCommand& commandRef);
-
-    /**
-     * {@inheritDoc}
-     *
-     * @since 2.0.1
-     */
-    const CalypsoCardCommand& getCommandRef() const override;
+    CmdSamGetChallenge(const CalypsoSam::ProductType productType,
+                       const uint8_t expectedResponseLength);
 
     /**
      * (package-private)<br>
-     * Indicates if the session buffer is used when executing this command.
+     * Gets the challenge.
      *
-     * <p>Allows the management of the overflow of this buffer.
-     *
-     * @return True if this command uses the session buffer
+     * @return the challenge
      * @since 2.0.1
      */
-    virtual bool isSessionBufferUsed() const = 0;
+    const std::vector<uint8_t> getChallenge() const;
 
-    /**
+   /**
      * {@inheritDoc}
      *
      * @since 2.0.1
      */
-    const std::shared_ptr<CalypsoApduCommandException> buildCommandException(
-        const std::type_info& exceptionClass,
-        const std::string& message,
-        const CardCommand& commandRef,
-        const int statusWord) const final;
-
-    /**
-     * {@inheritDoc}
-     *
-     * @since 2.0.1
-     */
-    AbstractCardCommand& setApduResponse(const std::shared_ptr<ApduResponseApi> apduResponse)
+    const std::map<const int, const std::shared_ptr<StatusProperties>>& getStatusTable() const
         override;
 
+private:
     /**
-     * {@inheritDoc}
-     *
-     * @since 2.0.1
+     * The command
      */
-    void checkStatus() override;
+    static const CalypsoSamCommand mCommand;
+
+    /**
+     *
+     */
+    static const std::map<const int, const std::shared_ptr<StatusProperties>> STATUS_TABLE;
 };
 
 }

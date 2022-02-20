@@ -73,16 +73,27 @@ ADD_LIBRARY(
     ${CMAKE_CURRENT_SOURCE_DIR}/AbstractCardCommand.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/AbstractSamCommand.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ApduRequestAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardClass.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardCommand.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardConstant.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoSamCommand.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardCommandManager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardRequestAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CardSecuritySettingAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardSelectorAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetDataFci.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamDigestClose.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamDigestInit.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamDigestUpdate.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamGetChallenge.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamSelectDiversifier.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ElementaryFileAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FileDataAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FileHeaderAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SamCommandProcessor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SamUtilAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SearchCommandDataAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SvDebitLogRecordAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SvLoadLogRecordAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SvDebitLogRecordJsonDeserializerAdapter.cpp

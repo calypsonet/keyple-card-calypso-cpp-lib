@@ -27,7 +27,8 @@ namespace keyple {
 namespace card {
 namespace calypso {
 
-const std::map<int, std::shared_ptr<StatusProperties>> AbstractSamCommand::STATUS_TABLE = {
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    AbstractSamCommand::STATUS_TABLE = {
     {0x6D00,
      std::make_shared<StatusProperties>("Instruction unknown.",
                                         typeid(CalypsoSamIllegalParameterException))},
@@ -36,27 +37,28 @@ const std::map<int, std::shared_ptr<StatusProperties>> AbstractSamCommand::STATU
                                         typeid(CalypsoSamIllegalParameterException))}
 };
 
-const std::map<int, std::shared_ptr<StatusProperties>>& AbstractSamCommand::getStatusTable() const
+const std::map<const int, const std::shared_ptr<StatusProperties>>&
+    AbstractSamCommand::getStatusTable() const
 {
     return STATUS_TABLE;
 }
 
-AbstractSamCommand::AbstractSamCommand(CalypsoSamCommand& commandRef)
+AbstractSamCommand::AbstractSamCommand(const CalypsoSamCommand& commandRef)
 : AbstractApduCommand(commandRef) {}
 
-CalypsoSamCommand& AbstractSamCommand::getCommandRef() const
+const CalypsoSamCommand& AbstractSamCommand::getCommandRef() const
 {
-    return dynamic_cast<CalypsoSamCommand&>(AbstractApduCommand::getCommandRef());
+    return dynamic_cast<const CalypsoSamCommand&>(AbstractApduCommand::getCommandRef());
 }
 
 const std::shared_ptr<CalypsoApduCommandException> AbstractSamCommand::buildCommandException(
     const std::type_info& exceptionClass,
     const std::string& message,
-    CardCommand& commandRef,
+    const CardCommand& commandRef,
     const int statusWord) const
 {
 
-    const auto& command = dynamic_cast<CalypsoSamCommand&>(commandRef);
+    const auto& command = dynamic_cast<const CalypsoSamCommand&>(commandRef);
     const auto sw = std::make_shared<int>(statusWord);
 
     if (exceptionClass == typeid(CalypsoSamAccessForbiddenException)) {

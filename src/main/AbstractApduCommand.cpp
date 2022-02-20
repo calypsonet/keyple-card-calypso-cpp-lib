@@ -51,11 +51,12 @@ const std::type_info& StatusProperties::getExceptionClass() const
 
 /* ABSTRACT APDU COMMAND ------------------------------------------------------------------------ */
 
-std::map<int, std::shared_ptr<StatusProperties>> AbstractApduCommand::STATUS_TABLE = {
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    AbstractApduCommand::STATUS_TABLE = {
     {0x9000, std::make_shared<StatusProperties>("Success")},
 };
 
-AbstractApduCommand::AbstractApduCommand(CardCommand& commandRef)
+AbstractApduCommand::AbstractApduCommand(const CardCommand& commandRef)
 : mCommandRef(commandRef), mName(commandRef.getName()) {}
 
 void AbstractApduCommand::addSubName(const std::string& subName)
@@ -64,7 +65,7 @@ void AbstractApduCommand::addSubName(const std::string& subName)
     mApduRequest->setInfo(mName);
 }
 
-CardCommand& AbstractApduCommand::getCommandRef() const
+const CardCommand& AbstractApduCommand::getCommandRef() const
 {
     return mCommandRef;
 }
@@ -98,7 +99,8 @@ const std::shared_ptr<ApduResponseApi> AbstractApduCommand::getApduResponse() co
     return mApduResponse;
 }
 
-const std::map<int, std::shared_ptr<StatusProperties>>& AbstractApduCommand::getStatusTable() const
+const std::map<const int, const std::shared_ptr<StatusProperties>>&
+    AbstractApduCommand::getStatusTable() const
 {
     return STATUS_TABLE;
 }
@@ -106,7 +108,7 @@ const std::map<int, std::shared_ptr<StatusProperties>>& AbstractApduCommand::get
 const std::shared_ptr<CalypsoApduCommandException> AbstractApduCommand::buildCommandException(
     const std::type_info& exceptionClass,
     const std::string& message,
-    CardCommand& commandRef,
+    const CardCommand& commandRef,
     const int statusWord) const
 {
     (void)exceptionClass;
@@ -119,7 +121,7 @@ const std::shared_ptr<CalypsoApduCommandException> AbstractApduCommand::buildCom
 
 const std::shared_ptr<StatusProperties> AbstractApduCommand::getStatusWordProperties() const
 {
-    const std::map<int, std::shared_ptr<StatusProperties>> table = getStatusTable();
+    const std::map<const int, const std::shared_ptr<StatusProperties>> table = getStatusTable();
     const auto it = getStatusTable().find(mApduResponse->getStatusWord());
 
     return it != table.end() ? it->second : nullptr;
