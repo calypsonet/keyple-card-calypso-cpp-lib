@@ -28,8 +28,10 @@ namespace calypso {
 using namespace keyple::core::util;
 using namespace keyple::core::util::cpp;
 
+const int CmdCardGetDataFci::TAG_DF_NAME = 0x84;
+const int CmdCardGetDataFci::TAG_APPLICATION_SERIAL_NUMBER = 0xC7;
+const int CmdCardGetDataFci::TAG_DISCRETIONARY_DATA = 0x53;
 const CalypsoCardCommand CmdCardGetDataFci::mCommand = CalypsoCardCommand::GET_DATA;
-
 const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardGetDataFci::STATUS_TABLE =
 {
     {
@@ -47,10 +49,6 @@ const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardGetDat
                                            typeid(nullptr))
     }
 };
-
-const int CmdCardGetDataFci::TAG_DF_NAME = 0x84;
-const int CmdCardGetDataFci::TAG_APPLICATION_SERIAL_NUMBER = 0xC7;
-const int CmdCardGetDataFci::TAG_DISCRETIONARY_DATA = 0x53;
 
 CmdCardGetDataFci::CmdCardGetDataFci(const CalypsoCardClass calypsoCardClass)
 : AbstractCardCommand(mCommand), mIsDfInvalidated(false), mIsValidCalypsoFCI(false)

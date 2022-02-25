@@ -13,73 +13,63 @@
 #pragma once
 
 #include <cstdint>
-#include <ostream>
+#include <map>
+#include <vector>
+
+/* Calypsonet Terminal Calypso */
+#include "CalypsoSam.h"
+
+/* Keyple Card Calypso */
+#include "AbstractApduCommand.h"
+#include "AbstractSamCommand.h"
 
 namespace keyple {
 namespace card {
 namespace calypso {
 
+using namespace calypsonet::terminal::calypso::sam;
+using namespace keyple::card::calypso;
+
+using StatusProperties = AbstractApduCommand::StatusProperties;
+
 /**
  * (package-private)<br>
- * Defines the two existing ISO7816 class bytes for a Calypso card command.: LEGACY for REV1 /
- * BPRIME type card, ISO for REV2/3 / B type
+ * Builds the SV Check APDU command.
  *
- * @since 2.0.0
+ * @since 2.0.1
  */
-class CalypsoCardClass {
+class CmdSamSvCheck final : public AbstractSamCommand {
 public:
-    /** Dummy init value */
-    static const CalypsoCardClass UNKNOWN;
-
-    /** Calypso product type 1/2 / B Prime protocol, regular commands */
-    static const CalypsoCardClass LEGACY;
-
-    /** Calypso product type 1/2 / B Prime protocol, Stored Value commands */
-    static const CalypsoCardClass LEGACY_STORED_VALUE;
-
-    /** Calypso product type 3 and higher */
-    static const CalypsoCardClass ISO;
-
     /**
+     * (package-private)<br>
+     * Instantiates a new CmdSamSvCheck to authenticate a card SV transaction.
      *
+     * @param productType the SAM product type.
+     * @param svCardSignature null if the operation is to abort the SV transaction, a 3 or 6-byte
+     *     array. containing the card signature from SV Debit, SV Load or SV Undebit.
+     * @since 2.0.1
      */
-    CalypsoCardClass(const CalypsoCardClass& o);
+    CmdSamSvCheck(const CalypsoSam::ProductType productType,
+                  const std::vector<uint8_t>& svCardSignature);
 
-    /**
-     * Gets the class byte.
+   /**
+     * {@inheritDoc}
      *
-     * @return A byte
-     * @since 2.0.0
+     * @since 2.0.1
      */
-    uint8_t getValue() const;
-
-    /**
-     *
-     */
-    CalypsoCardClass& operator=(const CalypsoCardClass& o);
-
-    /**
-     *
-     */
-    bool operator==(const CalypsoCardClass& o) const;
-
-    /**
-     *
-     */
-    friend std::ostream& operator<<(std::ostream& os, const CalypsoCardClass& ccc);
+    const std::map<const int, const std::shared_ptr<StatusProperties>>& getStatusTable() const
+        override;
 
 private:
     /**
-     *
+     * The command
      */
-    uint8_t mCla;
+    static const CalypsoSamCommand mCommand;
 
     /**
-     * Constructor
      *
-     * @param cla class byte value.
      */
-    CalypsoCardClass(const uint8_t cla);
+    static const std::map<const int, const std::shared_ptr<StatusProperties>> STATUS_TABLE;
 };
 
 }

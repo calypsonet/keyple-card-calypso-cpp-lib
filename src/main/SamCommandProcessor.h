@@ -27,6 +27,9 @@
 /* Keyple Card Calypso */
 #include "AbstractSamCommand.h"
 #include "CalypsoCardAdapter.h"
+#include "CmdCardSvDebit.h"
+#include "CmdCardSvUndebit.h"
+#include "CmdCardSvReload.h"
 
 /* Keyple Core Util */
 #include "LoggerFactory.h"
@@ -149,485 +152,154 @@ public:
                                const std::vector<std::shared_ptr<ApduResponseApi>>& responses,
                                const int startIndex);
 
-    // /**
-    //  * Gets the terminal signature from the SAM
-    //  *
-    //  * <p>All remaining data in the digest cache is sent to the SAM and the Digest Close command is
-    //  * executed.
-    //  *
-    //  * @return the terminal signature
-    //  * @throws CalypsoSamCommandException if the SAM has responded with an error status
-    //  * @throws ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
-    //  * @throws CardBrokenCommunicationException if the communication with the SAM has failed.
-    //  * @throws DesynchronizedExchangesException if the APDU SAM exchanges are out of sync
-    //  * @since 2.0.0
-    //  */
-    // byte[] getTerminalSignature()
-    //     throws CalypsoSamCommandException, CardBrokenCommunicationException,
-    //         ReaderBrokenCommunicationException {
-
-    //     // All remaining SAM digest operations will now run at once.
-    //     // Get the SAM Digest request including Digest Close from the cache manager
-    //     List<AbstractSamCommand> samCommands = getPendingSamCommands(true);
-
-    //     CardRequestSpi samCardRequest = new CardRequestAdapter(getApduRequests(samCommands), false);
-
-    //     // Transmit CardRequest and get CardResponse
-    //     CardResponseApi samCardResponse;
-
-    //     try {
-    //     samCardResponse = samReader.transmitCardRequest(samCardRequest, ChannelControl.KEEP_OPEN);
-    //     } catch (UnexpectedStatusWordException e) {
-    //     throw new IllegalStateException(UNEXPECTED_EXCEPTION, e);
-    //     }
-
-    //     List<ApduResponseApi> samApduResponses = samCardResponse.getApduResponses();
-
-    //     if (samApduResponses.size() != samCommands.size()) {
-    //     throw new DesynchronizedExchangesException(
-    //         "The number of commands/responses does not match: cmd="
-    //             + samCommands.size()
-    //             + ", resp="
-    //             + samApduResponses.size());
-    //     }
-
-    //     // check all responses status
-    //     for (int i = 0; i < samApduResponses.size(); i++) {
-    //     samCommands.get(i).setApduResponse(samApduResponses.get(i)).checkStatus();
-    //     }
-
-    //     // Get Terminal Signature from the latest response
-    //     CmdSamDigestClose cmdSamDigestClose =
-    //         (CmdSamDigestClose)
-    //             samCommands
-    //                 .get(samCommands.size() - 1)
-    //                 .setApduResponse(samApduResponses.get(samCommands.size() - 1));
-
-    //     byte[] sessionTerminalSignature = cmdSamDigestClose.getSignature();
-
-    //     if (logger.isDebugEnabled()) {
-    //     logger.debug("SIGNATURE = {}", ByteArrayUtil.toHex(sessionTerminalSignature));
-    //     }
-
-    //     return sessionTerminalSignature;
-    // }
-
-    // /**
-    //  * Authenticates the signature part from the card
-    //  *
-    //  * <p>Executes the Digest Authenticate command with the card part of the signature.
-    //  *
-    //  * @param cardSignatureLo the card part of the signature.
-    //  * @throws CalypsoSamCommandException if the SAM has responded with an error status
-    //  * @throws ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
-    //  * @throws CardBrokenCommunicationException if the communication with the SAM has failed.
-    //  * @throws DesynchronizedExchangesException if the APDU SAM exchanges are out of sync
-    //  * @since 2.0.0
-    //  */
-    // void authenticateCardSignature(byte[] cardSignatureLo)
-    //     throws CalypsoSamCommandException, CardBrokenCommunicationException,
-    //         ReaderBrokenCommunicationException {
-    //     // Check the card signature part with the SAM
-    //     // Build and send SAM Digest Authenticate command
-    //     CmdSamDigestAuthenticate cmdSamDigestAuthenticate =
-    //         new CmdSamDigestAuthenticate(samProductType, cardSignatureLo);
-
-    //     List<ApduRequestSpi> samApduRequests = new ArrayList<ApduRequestSpi>();
-    //     samApduRequests.add(cmdSamDigestAuthenticate.getApduRequest());
-
-    //     CardRequestSpi samCardRequest = new CardRequestAdapter(samApduRequests, false);
-
-    //     CardResponseApi samCardResponse;
-    //     try {
-    //     samCardResponse = samReader.transmitCardRequest(samCardRequest, ChannelControl.KEEP_OPEN);
-    //     } catch (UnexpectedStatusWordException e) {
-    //     throw new IllegalStateException(UNEXPECTED_EXCEPTION, e);
-    //     }
-
-    //     // Get transaction result parsing the response
-    //     List<ApduResponseApi> samApduResponses = samCardResponse.getApduResponses();
-
-    //     if (samApduResponses == null || samApduResponses.isEmpty()) {
-    //     throw new DesynchronizedExchangesException("No response to Digest Authenticate command.");
-    //     }
-
-    //     cmdSamDigestAuthenticate.setApduResponse(samApduResponses.get(0)).checkStatus();
-    // }
-
-    // /**
-    //  * Create an ApduRequestAdapter List from a AbstractSamCommand List.
-    //  *
-    //  * @param samCommands a list of SAM commands.
-    //  * @return the ApduRequestAdapter list
-    //  * @since 2.0.0
-    //  */
-    // private List<ApduRequestSpi> getApduRequests(List<AbstractSamCommand> samCommands) {
-    //     List<ApduRequestSpi> apduRequests = new ArrayList<ApduRequestSpi>();
-    //     if (samCommands != null) {
-    //     for (AbstractSamCommand samCommand : samCommands) {
-    //         apduRequests.add(samCommand.getApduRequest());
-    //     }
-    //     }
-    //     return apduRequests;
-    // }
-
-    // /**
-    //  * (package-private)<br>
-    //  * Compute the encrypted key data for the "Change Key" command.
-    //  *
-    //  * @param poChallenge The challenge from the card.
-    //  * @param cipheringKif The KIF of the key used for encryption.
-    //  * @param cipheringKvc The KVC of the key used for encryption.
-    //  * @param sourceKif The KIF of the key to encrypt.
-    //  * @param sourceKvc The KVC of the key to encrypt.
-    //  * @return An array of 32 bytes containing the encrypted key.
-    //  * @throws CalypsoSamCommandException if the SAM has responded with an error status
-    //  * @throws ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
-    //  * @throws CardBrokenCommunicationException if the communication with the SAM has failed.
-    //  * @since 2.1.0
-    //  */
-    // byte[] getEncryptedKey(
-    //     byte[] poChallenge, byte cipheringKif, byte cipheringKvc, byte sourceKif, byte sourceKvc)
-    //     throws CalypsoSamCommandException, CardBrokenCommunicationException,
-    //         ReaderBrokenCommunicationException {
-    //     List<AbstractSamCommand> samCommands = new ArrayList<AbstractSamCommand>();
-
-    //     if (!isDiversificationDone) {
-    //     // Build the SAM Select Diversifier command to provide the SAM with the card S/N
-    //     // CL-SAM-CSN.1
-    //     samCommands.add(
-    //         new CmdSamSelectDiversifier(samProductType, calypsoCard.getCalypsoSerialNumberFull()));
-    //     isDiversificationDone = true;
-    //     }
-
-    //     samCommands.add(new CmdSamGiveRandom(samProductType, poChallenge));
-
-    //     int cardGenerateKeyCmdIndex = samCommands.size();
-
-    //     CmdSamCardGenerateKey cmdSamCardGenerateKey =
-    //         new CmdSamCardGenerateKey(samProductType, cipheringKif, cipheringKvc, sourceKif, sourceKvc);
-
-    //     samCommands.add(cmdSamCardGenerateKey);
-
-    //     // build a SAM CardRequest
-    //     CardRequestSpi samCardRequest = new CardRequestAdapter(getApduRequests(samCommands), false);
-
-    //     // execute the command
-    //     CardResponseApi samCardResponse;
-    //     try {
-    //     samCardResponse = samReader.transmitCardRequest(samCardRequest, ChannelControl.KEEP_OPEN);
-    //     } catch (UnexpectedStatusWordException e) {
-    //     throw new IllegalStateException(UNEXPECTED_EXCEPTION, e);
-    //     }
-
-    //     ApduResponseApi cmdSamCardGenerateKeyResponse =
-    //         samCardResponse.getApduResponses().get(cardGenerateKeyCmdIndex);
-
-    //     // check execution status
-    //     cmdSamCardGenerateKey.setApduResponse(cmdSamCardGenerateKeyResponse).checkStatus();
-
-    //     return cmdSamCardGenerateKey.getCipheredData();
-    // }
-
-    // /**
-    //  * (package-private)<br>
-    //  * Compute the PIN ciphered data for the encrypted PIN verification or PIN update commands
-    //  *
-    //  * @param poChallenge the challenge from the card.
-    //  * @param currentPin the current PIN value.
-    //  * @param newPin the new PIN value (set to null if the operation is a PIN presentation).
-    //  * @return the PIN ciphered data
-    //  * @throws CalypsoSamCommandException if the SAM has responded with an error status
-    //  * @throws ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
-    //  * @throws CardBrokenCommunicationException if the communication with the SAM has failed.
-    //  * @since 2.0.0
-    //  */
-    // byte[] getCipheredPinData(byte[] poChallenge, byte[] currentPin, byte[] newPin)
-    //     throws CalypsoSamCommandException, CardBrokenCommunicationException,
-    //         ReaderBrokenCommunicationException {
-    //     List<AbstractSamCommand> samCommands = new ArrayList<AbstractSamCommand>();
-    //     byte pinCipheringKif;
-    //     byte pinCipheringKvc;
-
-    //     if (kif != 0) {
-    //     // the current work key has been set (a secure session is open)
-    //     pinCipheringKif = kif;
-    //     pinCipheringKvc = kvc;
-    //     } else {
-    //     // no current work key is available (outside secure session)
-    //     if (newPin == null) {
-    //         // PIN verification
-    //         if (((CardSecuritySettingAdapter) cardSecuritySettings).getPinVerificationCipheringKif()
-    //                 == null
-    //             || ((CardSecuritySettingAdapter) cardSecuritySettings).getPinVerificationCipheringKvc()
-    //                 == null) {
-    //         throw new IllegalStateException(
-    //             "No KIF or KVC defined for the PIN verification ciphering key");
-    //         }
-    //         pinCipheringKif =
-    //             ((CardSecuritySettingAdapter) cardSecuritySettings).getPinVerificationCipheringKif();
-    //         pinCipheringKvc =
-    //             ((CardSecuritySettingAdapter) cardSecuritySettings).getPinVerificationCipheringKvc();
-    //     } else {
-    //         // PIN modification
-    //         if (((CardSecuritySettingAdapter) cardSecuritySettings).getPinModificationCipheringKif()
-    //                 == null
-    //             || ((CardSecuritySettingAdapter) cardSecuritySettings).getPinModificationCipheringKvc()
-    //                 == null) {
-    //         throw new IllegalStateException(
-    //             "No KIF or KVC defined for the PIN modification ciphering key");
-    //         }
-    //         pinCipheringKif =
-    //             ((CardSecuritySettingAdapter) cardSecuritySettings).getPinModificationCipheringKif();
-    //         pinCipheringKvc =
-    //             ((CardSecuritySettingAdapter) cardSecuritySettings).getPinModificationCipheringKvc();
-    //     }
-    //     }
-
-    //     if (!isDiversificationDone) {
-    //     // Build the SAM Select Diversifier command to provide the SAM with the card S/N
-    //     // CL-SAM-CSN.1
-    //     samCommands.add(
-    //         new CmdSamSelectDiversifier(samProductType, calypsoCard.getCalypsoSerialNumberFull()));
-    //     isDiversificationDone = true;
-    //     }
-
-    //     if (isDigesterInitialized) {
-    //     /* Get the pending SAM ApduRequestAdapter and add it to the current ApduRequestAdapter list */
-    //     samCommands.addAll(getPendingSamCommands(false));
-    //     }
-
-    //     samCommands.add(new CmdSamGiveRandom(samProductType, poChallenge));
-
-    //     int cardCipherPinCmdIndex = samCommands.size();
-
-    //     CmdSamCardCipherPin cmdSamCardCipherPin =
-    //         new CmdSamCardCipherPin(
-    //             samProductType, pinCipheringKif, pinCipheringKvc, currentPin, newPin);
-
-    //     samCommands.add(cmdSamCardCipherPin);
-
-    //     // build a SAM CardRequest
-    //     CardRequestSpi samCardRequest = new CardRequestAdapter(getApduRequests(samCommands), false);
-
-    //     // execute the command
-    //     CardResponseApi samCardResponse;
-    //     try {
-    //     samCardResponse = samReader.transmitCardRequest(samCardRequest, ChannelControl.KEEP_OPEN);
-    //     } catch (UnexpectedStatusWordException e) {
-    //     throw new IllegalStateException(UNEXPECTED_EXCEPTION, e);
-    //     }
-
-    //     ApduResponseApi cardCipherPinResponse =
-    //         samCardResponse.getApduResponses().get(cardCipherPinCmdIndex);
-
-    //     // check execution status
-    //     cmdSamCardCipherPin.setApduResponse(cardCipherPinResponse).checkStatus();
-
-    //     return cmdSamCardCipherPin.getCipheredData();
-    // }
-
-    // /**
-    //  * Generic method to get the complementary data from SvPrepareLoad/Debit/Undebit commands
-    //  *
-    //  * <p>Executes the SV Prepare SAM command to prepare the data needed to complete the card SV
-    //  * command.
-    //  *
-    //  * <p>This data comprises:
-    //  *
-    //  * <ul>
-    //  *   <li>The SAM identifier (4 bytes)
-    //  *   <li>The SAM challenge (3 bytes)
-    //  *   <li>The SAM transaction number (3 bytes)
-    //  *   <li>The SAM part of the SV signature (5 or 10 bytes depending on card mode)
-    //  * </ul>
-    //  *
-    //  * @param cmdSamSvPrepare the prepare command (can be prepareSvReload/Debit/Undebit).
-    //  * @return a byte array containing the complementary data
-    //  * @throws CalypsoSamCommandException if the SAM has responded with an error status
-    //  * @throws ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
-    //  * @throws CardBrokenCommunicationException if the communication with the SAM has failed.
-    //  * @since 2.0.0
-    //  */
-    // private byte[] getSvComplementaryData(AbstractSamCommand cmdSamSvPrepare)
-    //     throws CalypsoSamCommandException, CardBrokenCommunicationException,
-    //         ReaderBrokenCommunicationException {
-
-    //     List<AbstractSamCommand> samCommands = new ArrayList<AbstractSamCommand>();
-
-    //     if (!isDiversificationDone) {
-    //     /* Build the SAM Select Diversifier command to provide the SAM with the card S/N */
-    //     // CL-SAM-CSN.1
-    //     samCommands.add(
-    //         new CmdSamSelectDiversifier(samProductType, calypsoCard.getCalypsoSerialNumberFull()));
-    //     isDiversificationDone = true;
-    //     }
-
-    //     if (isDigesterInitialized) {
-    //     /* Get the pending SAM ApduRequestAdapter and add it to the current ApduRequestAdapter list */
-    //     samCommands.addAll(getPendingSamCommands(false));
-    //     }
-
-    //     int svPrepareOperationCmdIndex = samCommands.size();
-
-    //     samCommands.add(cmdSamSvPrepare);
-
-    //     // build a SAM CardRequest
-    //     CardRequestSpi samCardRequest = new CardRequestAdapter(getApduRequests(samCommands), false);
-
-    //     // execute the command
-    //     CardResponseApi samCardResponse;
-    //     try {
-    //     samCardResponse = samReader.transmitCardRequest(samCardRequest, ChannelControl.KEEP_OPEN);
-    //     } catch (UnexpectedStatusWordException e) {
-    //     throw new IllegalStateException(UNEXPECTED_EXCEPTION, e);
-    //     }
-
-    //     ApduResponseApi svPrepareResponse =
-    //         samCardResponse.getApduResponses().get(svPrepareOperationCmdIndex);
-
-    //     // check execution status
-    //     cmdSamSvPrepare.setApduResponse(svPrepareResponse).checkStatus();
-
-    //     byte[] prepareOperationData = cmdSamSvPrepare.getApduResponse().getDataOut();
-
-    //     byte[] operationComplementaryData =
-    //         new byte[samSerialNumber.length + prepareOperationData.length];
-
-    //     System.arraycopy(samSerialNumber, 0, operationComplementaryData, 0, samSerialNumber.length);
-    //     System.arraycopy(
-    //         prepareOperationData,
-    //         0,
-    //         operationComplementaryData,
-    //         samSerialNumber.length,
-    //         prepareOperationData.length);
-
-    //     return operationComplementaryData;
-    // }
-
-    // /**
-    //  * Computes the cryptographic data required for the SvReload command.
-    //  *
-    //  * <p>Use the data from the SvGet command and the partial data from the SvReload command for this
-    //  * purpose.
-    //  *
-    //  * <p>The returned data will be used to finalize the card SvReload command.
-    //  *
-    //  * @param cmdCardSvReload the SvDebit command providing the SvReload partial data.
-    //  * @param svGetHeader the SV Get command header.
-    //  * @param svGetData the SV Get command response data.
-    //  * @return the complementary security data to finalize the SvReload card command (sam ID + SV
-    //  *     prepare load output)
-    //  * @throws CalypsoSamCommandException if the SAM has responded with an error status
-    //  * @throws ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
-    //  * @throws CardBrokenCommunicationException if the communication with the SAM has failed.
-    //  * @since 2.0.0
-    //  */
-    // byte[] getSvReloadComplementaryData(
-    //     CmdCardSvReload cmdCardSvReload, byte[] svGetHeader, byte[] svGetData)
-    //     throws CalypsoSamCommandException, ReaderBrokenCommunicationException,
-    //         CardBrokenCommunicationException {
-    //     // get the complementary data from the SAM
-    //     CmdSamSvPrepareLoad cmdSamSvPrepareLoad =
-    //         new CmdSamSvPrepareLoad(
-    //             samProductType, svGetHeader, svGetData, cmdCardSvReload.getSvReloadData());
-
-    //     return getSvComplementaryData(cmdSamSvPrepareLoad);
-    // }
-
-    // /**
-    //  * Computes the cryptographic data required for the SvDebit command.
-    //  *
-    //  * <p>Use the data from the SvGet command and the partial data from the SvDebit command for this
-    //  * purpose.
-    //  *
-    //  * <p>The returned data will be used to finalize the card SvDebit command.
-    //  *
-    //  * @param svGetHeader the SV Get command header.
-    //  * @param svGetData the SV Get command response data.
-    //  * @return the complementary security data to finalize the SvDebit card command (sam ID + SV
-    //  *     prepare load output)
-    //  * @throws CalypsoSamCommandException if the SAM has responded with an error status
-    //  * @throws ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
-    //  * @throws CardBrokenCommunicationException if the communication with the SAM has failed.
-    //  * @since 2.0.0
-    //  */
-    // byte[] getSvDebitComplementaryData(
-    //     CmdCardSvDebit cmdCardSvDebit, byte[] svGetHeader, byte[] svGetData)
-    //     throws CalypsoSamCommandException, ReaderBrokenCommunicationException,
-    //         CardBrokenCommunicationException {
-    //     // get the complementary data from the SAM
-    //     CmdSamSvPrepareDebit cmdSamSvPrepareDebit =
-    //         new CmdSamSvPrepareDebit(
-    //             samProductType, svGetHeader, svGetData, cmdCardSvDebit.getSvDebitData());
-
-    //     return getSvComplementaryData(cmdSamSvPrepareDebit);
-    // }
-
-    // /**
-    //  * Computes the cryptographic data required for the SvUndebit command.
-    //  *
-    //  * <p>Use the data from the SvGet command and the partial data from the SvUndebit command for this
-    //  * purpose.
-    //  *
-    //  * <p>The returned data will be used to finalize the card SvUndebit command.
-    //  *
-    //  * @param svGetHeader the SV Get command header.
-    //  * @param svGetData the SV Get command response data.
-    //  * @return the complementary security data to finalize the SvUndebit card command (sam ID + SV
-    //  *     prepare load output)
-    //  * @throws CalypsoSamCommandException if the SAM has responded with an error status
-    //  * @throws ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
-    //  * @throws CardBrokenCommunicationException if the communication with the SAM has failed.
-    //  * @since 2.0.0
-    //  */
-    // public byte[] getSvUndebitComplementaryData(
-    //     CmdCardSvUndebit cmdCardSvUndebit, byte[] svGetHeader, byte[] svGetData)
-    //     throws CalypsoSamCommandException, ReaderBrokenCommunicationException,
-    //         CardBrokenCommunicationException {
-    //     // get the complementary data from the SAM
-    //     CmdSamSvPrepareUndebit cmdSamSvPrepareUndebit =
-    //         new CmdSamSvPrepareUndebit(
-    //             samProductType, svGetHeader, svGetData, cmdCardSvUndebit.getSvUndebitData());
-
-    //     return getSvComplementaryData(cmdSamSvPrepareUndebit);
-    // }
-
-    // /**
-    //  * Checks the status of the last SV operation
-    //  *
-    //  * <p>The card signature is compared by the SAM with the one it has computed on its side.
-    //  *
-    //  * @param svOperationResponseData the data of the SV operation performed.
-    //  * @throws CalypsoSamCommandException if the SAM has responded with an error status
-    //  * @throws ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
-    //  * @throws CardBrokenCommunicationException if the communication with the SAM has failed.
-    //  * @since 2.0.0
-    //  */
-    // void checkSvStatus(byte[] svOperationResponseData)
-    //     throws CalypsoSamCommandException, CardBrokenCommunicationException,
-    //         ReaderBrokenCommunicationException {
-    //     List<AbstractSamCommand> samCommands = new ArrayList<AbstractSamCommand>();
-
-    //     CmdSamSvCheck cmdSamSvCheck = new CmdSamSvCheck(samProductType, svOperationResponseData);
-    //     samCommands.add(cmdSamSvCheck);
-
-    //     // build a SAM CardRequest
-    //     CardRequestSpi samCardRequest = new CardRequestAdapter(getApduRequests(samCommands), false);
-
-    //     // execute the command
-    //     CardResponseApi samCardResponse;
-    //     try {
-    //     samCardResponse = samReader.transmitCardRequest(samCardRequest, ChannelControl.KEEP_OPEN);
-    //     } catch (UnexpectedStatusWordException e) {
-    //     throw new IllegalStateException(UNEXPECTED_EXCEPTION, e);
-    //     }
-
-    //     ApduResponseApi svCheckResponse = samCardResponse.getApduResponses().get(0);
-
-    //     // check execution status
-    //     cmdSamSvCheck.setApduResponse(svCheckResponse).checkStatus();
-    // }
+    /**
+     * Gets the terminal signature from the SAM
+     *
+     * <p>All remaining data in the digest cache is sent to the SAM and the Digest Close command is
+     * executed.
+     *
+     * @return the terminal signature
+     * @throws CalypsoSamCommandException if the SAM has responded with an error status
+     * @throw ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
+     * @throw CardBrokenCommunicationException if the communication with the SAM has failed.
+     * @throw DesynchronizedExchangesException if the APDU SAM exchanges are out of sync
+     * @since 2.0.0
+     */
+    const std::vector<uint8_t> getTerminalSignature();
+
+    /**
+     * Authenticates the signature part from the card
+     *
+     * <p>Executes the Digest Authenticate command with the card part of the signature.
+     *
+     * @param cardSignatureLo the card part of the signature.
+     * @throws CalypsoSamCommandException if the SAM has responded with an error status
+     * @throws ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
+     * @throws CardBrokenCommunicationException if the communication with the SAM has failed.
+     * @throws DesynchronizedExchangesException if the APDU SAM exchanges are out of sync
+     * @since 2.0.0
+     */
+    void authenticateCardSignature(const std::vector<uint8_t>& cardSignatureLo);
+
+    /**
+     * (package-private)<br>
+     * Compute the encrypted key data for the "Change Key" command.
+     *
+     * @param poChallenge The challenge from the card.
+     * @param cipheringKif The KIF of the key used for encryption.
+     * @param cipheringKvc The KVC of the key used for encryption.
+     * @param sourceKif The KIF of the key to encrypt.
+     * @param sourceKvc The KVC of the key to encrypt.
+     * @return An array of 32 bytes containing the encrypted key.
+     * @throw CalypsoSamCommandException if the SAM has responded with an error status
+     * @throw ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
+     * @throw CardBrokenCommunicationException if the communication with the SAM has failed.
+     * @since 2.1.0
+     */
+    const std::vector<uint8_t> getEncryptedKey(const std::vector<uint8_t>& poChallenge,
+                                               const uint8_t cipheringKif,
+                                               const uint8_t cipheringKvc,
+                                               const uint8_t sourceKif,
+                                               const uint8_t sourceKvc);
+
+    /**
+     * (package-private)<br>
+     * Compute the PIN ciphered data for the encrypted PIN verification or PIN update commands
+     *
+     * @param poChallenge the challenge from the card.
+     * @param currentPin the current PIN value.
+     * @param newPin the new PIN value (set to null if the operation is a PIN presentation).
+     * @return the PIN ciphered data
+     * @throw CalypsoSamCommandException if the SAM has responded with an error status
+     * @throw ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
+     * @throw CardBrokenCommunicationException if the communication with the SAM has failed.
+     * @since 2.0.0
+     */
+    const std::vector<uint8_t> getCipheredPinData(const std::vector<uint8_t>& poChallenge,
+                                                  const std::vector<uint8_t>& currentPin,
+                                                  const std::vector<uint8_t>& newPin);
+
+    /**
+     * Computes the cryptographic data required for the SvReload command.
+     *
+     * <p>Use the data from the SvGet command and the partial data from the SvReload command for this
+     * purpose.
+     *
+     * <p>The returned data will be used to finalize the card SvReload command.
+     *
+     * @param cmdCardSvReload the SvDebit command providing the SvReload partial data.
+     * @param svGetHeader the SV Get command header.
+     * @param svGetData the SV Get command response data.
+     * @return the complementary security data to finalize the SvReload card command (sam ID + SV
+     *     prepare load output)
+     * @throw CalypsoSamCommandException if the SAM has responded with an error status
+     * @throw ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
+     * @throw CardBrokenCommunicationException if the communication with the SAM has failed.
+     * @since 2.0.0
+     */
+    const std::vector<uint8_t> getSvReloadComplementaryData(
+        const std::shared_ptr<CmdCardSvReload> cmdCardSvReload,
+        const std::vector<uint8_t>& svGetHeader,
+        const std::vector<uint8_t>& svGetData);
+
+    /**
+     * Computes the cryptographic data required for the SvDebit command.
+     *
+     * <p>Use the data from the SvGet command and the partial data from the SvDebit command for this
+     * purpose.
+     *
+     * <p>The returned data will be used to finalize the card SvDebit command.
+     *
+     * @param svGetHeader the SV Get command header.
+     * @param svGetData the SV Get command response data.
+     * @return the complementary security data to finalize the SvDebit card command (sam ID + SV
+     *     prepare load output)
+     * @throws CalypsoSamCommandException if the SAM has responded with an error status
+     * @throws ReaderBrokenCommunicationException if the communication with the SAM reader has failed.
+     * @throws CardBrokenCommunicationException if the communication with the SAM has failed.
+     * @since 2.0.0
+     */
+    const std::vector<uint8_t> getSvDebitComplementaryData(
+        const std::shared_ptr<CmdCardSvDebit> cmdCardSvDebit,
+        const std::vector<uint8_t>& svGetHeader,
+        const std::vector<uint8_t>& svGetData);
+
+    /**
+     * Computes the cryptographic data required for the SvUndebit command.
+     *
+     * <p>Use the data from the SvGet command and the partial data from the SvUndebit command for
+     * this purpose.
+     *
+     * <p>The returned data will be used to finalize the card SvUndebit command.
+     *
+     * @param svGetHeader the SV Get command header.
+     * @param svGetData the SV Get command response data.
+     * @return the complementary security data to finalize the SvUndebit card command (sam ID + SV
+     *         prepare load output)
+     * @throw CalypsoSamCommandException if the SAM has responded with an error status
+     * @throw ReaderBrokenCommunicationException if the communication with the SAM reader has
+     *        failed.
+     * @throw CardBrokenCommunicationException if the communication with the SAM has failed.
+     * @since 2.0.0
+     */
+    const std::vector<uint8_t> getSvUndebitComplementaryData(
+        const std::shared_ptr<CmdCardSvUndebit> cmdCardSvUndebit,
+        const std::vector<uint8_t>& svGetHeader,
+        const std::vector<uint8_t>& svGetData);
+
+    /**
+     * Checks the status of the last SV operation
+     *
+     * <p>The card signature is compared by the SAM with the one it has computed on its side.
+     *
+     * @param svOperationResponseData the data of the SV operation performed.
+     * @throw CalypsoSamCommandException if the SAM has responded with an error status
+     * @throw ReaderBrokenCommunicationException if the communication with the SAM reader has
+     *        failed.
+     * @throw CardBrokenCommunicationException if the communication with the SAM has failed.
+     * @since 2.0.0
+     */
+    void checkSvStatus(const std::vector<uint8_t>& svOperationResponseData);
 
 private:
     /**
@@ -737,6 +409,42 @@ private:
      */
     const std::vector<std::shared_ptr<AbstractSamCommand>> getPendingSamCommands(
         const bool addDigestClose);
+
+    /**
+     * Create an ApduRequestAdapter List from a AbstractSamCommand List.
+     *
+     * @param samCommands a list of SAM commands.
+     * @return the ApduRequestAdapter list
+     * @since 2.0.0
+     */
+    const std::vector<std::shared_ptr<ApduRequestSpi>> getApduRequests(
+        const std::vector<std::shared_ptr<AbstractSamCommand>> samCommands) const;
+
+    /**
+     * Generic method to get the complementary data from SvPrepareLoad/Debit/Undebit commands
+     *
+     * <p>Executes the SV Prepare SAM command to prepare the data needed to complete the card SV
+     * command.
+     *
+     * <p>This data comprises:
+     *
+     * <ul>
+     *   <li>The SAM identifier (4 bytes)
+     *   <li>The SAM challenge (3 bytes)
+     *   <li>The SAM transaction number (3 bytes)
+     *   <li>The SAM part of the SV signature (5 or 10 bytes depending on card mode)
+     * </ul>
+     *
+     * @param cmdSamSvPrepare the prepare command (can be prepareSvReload/Debit/Undebit).
+     * @return a byte array containing the complementary data
+     * @throw CalypsoSamCommandException if the SAM has responded with an error status
+     * @throw ReaderBrokenCommunicationException if the communication with the SAM reader has
+     *        failed.
+     * @throw CardBrokenCommunicationException if the communication with the SAM has failed.
+     * @since 2.0.0
+     */
+    const std::vector<uint8_t> getSvComplementaryData(
+        const std::shared_ptr<AbstractSamCommand> cmdSamSvPrepare);
 };
 
 }

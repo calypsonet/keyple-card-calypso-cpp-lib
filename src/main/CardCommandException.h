@@ -14,6 +14,7 @@
 
 /* Keyple Card Calypso */
 #include "CalypsoApduCommandException.h"
+#include "CalypsoCardCommand.h"
 
 namespace keyple {
 namespace card {

@@ -77,17 +77,36 @@ ADD_LIBRARY(
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardClass.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardCommand.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardConstant.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardSelectionAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardUtilAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoSamCommand.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardCommandManager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardRequestAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardSecuritySettingAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CardSelectionRequestAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardSelectorAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetDataFci.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetDataEfList.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetDataFcp.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetDataTraceabilityInformation.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardReadRecords.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSelectFile.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSvDebit.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSvReload.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSvUndebit.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamCardCipherPin.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamCardGenerateKey.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamDigestAuthenticate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamDigestClose.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamDigestInit.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamDigestUpdate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamGetChallenge.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamGiveRandom.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamSelectDiversifier.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamSvCheck.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamSvPrepareDebit.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamSvPrepareLoad.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamSvPrepareUndebit.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ElementaryFileAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FileDataAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FileHeaderAdapter.cpp

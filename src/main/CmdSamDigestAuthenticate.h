@@ -12,32 +12,60 @@
 
 #pragma once
 
+#include <cstdint>
+#include <map>
+#include <vector>
+
+/* Calypsonet Terminal Calypso */
+#include "CalypsoSam.h"
+
 /* Keyple Card Calypso */
-#include "CalypsoApduCommandException.h"
-#include "CalypsoSamCommand.h"
+#include "AbstractSamCommand.h"
 
 namespace keyple {
 namespace card {
 namespace calypso {
 
+using namespace calypsonet::terminal::calypso::sam;
+
 /**
  * (package-private)<br>
- * Parent abstract class of all Keyple SAM APDU commands exceptions.
+ * Builds the Digest Authenticate APDU command.
  *
- * @since 2.0.0
+ * @since 2.0.1
  */
-class CalypsoSamCommandException : public CalypsoApduCommandException {
-protected:
+class CmdSamDigestAuthenticate final : public AbstractSamCommand {
+public:
     /**
-     * @param message the message to identify the exception context.
-     * @param command the Calypso SAM command.
-     * @param statusWord the status word (optional).
-     * @since 2.0.0
+     * (package-private)<br>
+     * Instantiates a new CmdSamDigestAuthenticate .
+     *
+     * @param productType the SAM product type.
+     * @param signature the signature.
+     * @throw IllegalArgumentException If the signature is null or has a wrong length.
+     * @since 2.0.1
      */
-    CalypsoSamCommandException(const std::string& message,
-                               const CalypsoSamCommand& command,
-                               const std::shared_ptr<int> statusWord)
-    : CalypsoApduCommandException(message, command, statusWord) {}
+    CmdSamDigestAuthenticate(const CalypsoSam::ProductType productType,
+                             const std::vector<uint8_t>& signature);
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 2.0.1
+     */
+    const std::map<const int, const std::shared_ptr<StatusProperties>>& getStatusTable() const
+        override;
+
+private:
+    /**
+     * The command
+     */
+    static const CalypsoSamCommand mCommand;
+
+    /**
+     *
+     */
+    static const std::map<const int, const std::shared_ptr<StatusProperties>> STATUS_TABLE;
 };
 
 }

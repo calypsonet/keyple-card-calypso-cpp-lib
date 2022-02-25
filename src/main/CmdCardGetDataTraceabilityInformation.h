@@ -13,73 +13,68 @@
 #pragma once
 
 #include <cstdint>
-#include <ostream>
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
+/* Keyple Card Calypso */
+#include "AbstractApduCommand.h"
+#include "AbstractCardCommand.h"
+#include "CalypsoCardClass.h"
 
 namespace keyple {
 namespace card {
 namespace calypso {
 
+using StatusProperties = AbstractApduCommand::StatusProperties;
+
 /**
  * (package-private)<br>
- * Defines the two existing ISO7816 class bytes for a Calypso card command.: LEGACY for REV1 /
- * BPRIME type card, ISO for REV2/3 / B type
+ * Builds the Get data APDU commands for the TRACEABILITY INFORMATION tag.
  *
- * @since 2.0.0
+ * <p>In contact mode, this command can not be sent in a secure session because it would generate a
+ * 6Cxx status and thus make calculation of the digest impossible.
+ *
+ * @since 2.1.0
  */
-class CalypsoCardClass {
+class CmdCardGetDataTraceabilityInformation final : public AbstractCardCommand {
 public:
-    /** Dummy init value */
-    static const CalypsoCardClass UNKNOWN;
-
-    /** Calypso product type 1/2 / B Prime protocol, regular commands */
-    static const CalypsoCardClass LEGACY;
-
-    /** Calypso product type 1/2 / B Prime protocol, Stored Value commands */
-    static const CalypsoCardClass LEGACY_STORED_VALUE;
-
-    /** Calypso product type 3 and higher */
-    static const CalypsoCardClass ISO;
+    /**
+     * (package-private)<br>
+     * Instantiates a new CmdCardGetDataTrace.
+     *
+     * @param calypsoCardClass indicates which CLA byte should be used for the Apdu.
+     * @since 2.1.0
+     */
+    CmdCardGetDataTraceabilityInformation(const CalypsoCardClass calypsoCardClass);
 
     /**
+     * {@inheritDoc}
      *
+     * @return False
+     * @since 2.1.0
      */
-    CalypsoCardClass(const CalypsoCardClass& o);
+    bool isSessionBufferUsed() const override;
 
     /**
-     * Gets the class byte.
+     * {@inheritDoc}
      *
-     * @return A byte
-     * @since 2.0.0
+     * @since 2.1.0
      */
-    uint8_t getValue() const;
-
-    /**
-     *
-     */
-    CalypsoCardClass& operator=(const CalypsoCardClass& o);
-
-    /**
-     *
-     */
-    bool operator==(const CalypsoCardClass& o) const;
-
-    /**
-     *
-     */
-    friend std::ostream& operator<<(std::ostream& os, const CalypsoCardClass& ccc);
+    const std::map<const int, const std::shared_ptr<StatusProperties>>& getStatusTable() const
+        override;
 
 private:
     /**
      *
      */
-    uint8_t mCla;
+    static const CalypsoCardCommand mCommand;
 
     /**
-     * Constructor
      *
-     * @param cla class byte value.
      */
-    CalypsoCardClass(const uint8_t cla);
+    static const std::map<const int, const std::shared_ptr<StatusProperties>> STATUS_TABLE;
 };
 
 }

@@ -10,50 +10,47 @@
  * SPDX-License-Identifier: EPL-2.0                                                               *
  **************************************************************************************************/
 
-#include "CalypsoCardClass.h"
+#include "CardSelectionRequestAdapter.h"
 
 namespace keyple {
 namespace card {
 namespace calypso {
 
-const CalypsoCardClass CalypsoCardClass::LEGACY(0x94);
-const CalypsoCardClass CalypsoCardClass::LEGACY_STORED_VALUE(0xFA);
-const CalypsoCardClass CalypsoCardClass::ISO(0x00);
-const CalypsoCardClass CalypsoCardClass::UNKNOWN(0xff);
+CardSelectionRequestAdapter::CardSelectionRequestAdapter(
+  const std::shared_ptr<CardSelectorSpi> cardSelector)
+: CardSelectionRequestAdapter(cardSelector, nullptr) {}
 
-CalypsoCardClass::CalypsoCardClass(const uint8_t cla) : mCla(cla) {}
+CardSelectionRequestAdapter::CardSelectionRequestAdapter(
+  const std::shared_ptr<CardSelectorSpi> cardSelector,
+  const std::shared_ptr<CardRequestSpi> cardRequest)
+: mCardSelector(cardSelector), mCardRequest(cardRequest) {}
 
-CalypsoCardClass::CalypsoCardClass(const CalypsoCardClass& o) : CalypsoCardClass(o.mCla) {}
-
-uint8_t CalypsoCardClass::getValue() const
+const std::shared_ptr<CardSelectorSpi> CardSelectionRequestAdapter::getCardSelector() const
 {
-    return mCla;
+    return mCardSelector;
 }
 
-CalypsoCardClass& CalypsoCardClass::operator=(const CalypsoCardClass& o)
+const std::shared_ptr<CardRequestSpi> CardSelectionRequestAdapter::getCardRequest() const
 {
-    mCla = o.mCla;
-
-    return *this;
+    return mCardRequest;
 }
 
-bool CalypsoCardClass::operator==(const CalypsoCardClass& o) const
+std::ostream& operator<<(std::ostream& os, const CardSelectionRequestAdapter& csra)
 {
-    return mCla == o.mCla;
+    os << "CARD_SELECTION_REQUEST_ADAPTER: {"
+       << "CARD_SELECTOR: " << csra.mCardSelector << ", "
+       << "CARD_REQUEST:" << csra.mCardRequest
+       << "}";
+
+    return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const CalypsoCardClass& ccc)
+std::ostream& operator<<(std::ostream& os, const std::shared_ptr<CardSelectionRequestAdapter> csra)
 {
-    os << "CALYPSO_CARD_CLASS: ";
-
-    if (ccc.getValue() == CalypsoCardClass::ISO.getValue()) {
-        os << "ISO";
-    } else if (ccc.getValue() == CalypsoCardClass::LEGACY.getValue()) {
-        os << "LEGACY";
-    } else if (ccc.getValue() == CalypsoCardClass::LEGACY_STORED_VALUE.getValue()) {
-        os << "LEGACY_STORED_VALUE";
+    if (csra == nullptr) {
+        os << "CARD_SELECTION_REQUEST_ADAPTER: null";
     } else {
-        os << "UNKNOWN";
+        os << *csra;
     }
 
     return os;
