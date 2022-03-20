@@ -68,7 +68,7 @@ SearchCommandData& SearchCommandDataAdapter::fetchFirstMatchingResult()
     return *this;
 }
 
-const std::vector<int>& SearchCommandDataAdapter::getMatchingRecordNumbers() const
+std::vector<int>& SearchCommandDataAdapter::getMatchingRecordNumbers()
 {
     return mMatchingRecordNumbers;
 }

@@ -14,14 +14,29 @@
 
 #include <memory>
 
+/* Calypsonet Terminal Card */
+#include "ApduResponseApi.h"
+
 /* Keyple Card Calypso */
 #include "AbstractCardCommand.h"
 #include "CalypsoCardAdapter.h"
+#include "CmdCardAppendRecord.h"
+#include "CmdCardIncreaseOrDecrease.h"
+#include "CmdCardIncreaseOrDecreaseMultiple.h"
+#include "CmdCardOpenSession.h"
 #include "CmdCardReadRecords.h"
+#include "CmdCardGetDataEfList.h"
+#include "CmdCardGetDataTraceabilityInformation.h"
+#include "CmdCardReadRecordMultiple.h"
+#include "CmdCardSearchRecordMultiple.h"
+#include "CmdCardUpdateRecord.h"
+#include "CmdCardWriteRecord.h"
 
 namespace keyple {
 namespace card {
 namespace calypso {
+
+using namespace calypsonet::terminal::card;
 
 /**
  * (package-private)<br>
@@ -36,47 +51,36 @@ public:
      * (package-private)<br>
      * Fills the CalypsoCard with the card's response to a single command
      *
-     * @param calypsoCard the {@link CalypsoCardAdapter} object to fill with the provided response
-     *     from the card.
+     * @param calypsoCard the CalypsoCardAdapter object to fill with the provided response from the
+     *        card.
      * @param command the command that get the response.
      * @param apduResponse the APDU response returned by the card to the command.
      * @param isSessionOpen true when a secure session is open.
      * @throws CardCommandException if a response from the card was unexpected
      * @since 2.0.0
      */
-    static void updateCalypsoCard(const std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+    static void updateCalypsoCard(std::shared_ptr<CalypsoCardAdapter> calypsoCard,
                                   const std::shared_ptr<AbstractCardCommand> command,
                                   const std::shared_ptr<ApduResponseApi> apduResponse,
                                   const bool isSessionOpen);
 
-    // /**
-    //  * (package-private)<br>
-    //  * Fills the CalypsoCard with the card's responses to a list of commands
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to fill with the provided response
-    //  *     from the card
-    //  * @param commands the list of commands that get the responses.
-    //  * @param apduResponses the APDU responses returned by the card to all commands.
-    //  * @param isSessionOpen true when a secure session is open.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  * @since 2.0.0
-    //  */
-    // static void updateCalypsoCard(
-    //     CalypsoCardAdapter calypsoCard,
-    //     List<AbstractCardCommand> commands,
-    //     List<ApduResponseApi> apduResponses,
-    //     boolean isSessionOpen)
-    //     throws CardCommandException {
-
-    //     Iterator<ApduResponseApi> responseIterator = apduResponses.iterator();
-
-    //     if (commands != null && !commands.isEmpty()) {
-    //     for (AbstractCardCommand command : commands) {
-    //         ApduResponseApi apduResponse = responseIterator.next();
-    //         updateCalypsoCard(calypsoCard, command, apduResponse, isSessionOpen);
-    //     }
-    //     }
-    // }
+    /**
+     * (package-private)<br>
+     * Fills the CalypsoCard with the card's responses to a list of commands
+     *
+     * @param calypsoCard the CalypsoCardAdapter object to fill with the provided response from the
+     *        card
+     * @param commands the list of commands that get the responses.
+     * @param apduResponses the APDU responses returned by the card to all commands.
+     * @param isSessionOpen true when a secure session is open.
+     * @throw CardCommandException if a response from the card was unexpected
+     * @since 2.0.0
+     */
+    static void updateCalypsoCard(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        const std::vector<std::shared_ptr<AbstractCardCommand>>& commands,
+        const std::vector<std::shared_ptr<ApduResponseApi>>& apduResponses,
+        const bool isSessionOpen);
 
 private:
     /**
@@ -84,33 +88,21 @@ private:
      */
     CalypsoCardUtilAdapter();
 
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to an Open Secure Session
-    //  * command received from the card <br>
-    //  * The ratification status and the data read at the time of the session opening are added to the
-    //  * CalypsoCard.
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardOpenSession the command.
-    //  * @param apduResponse the response received.
-    //  */
-    // private static void updateCalypsoCardOpenSession(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardOpenSession cmdCardOpenSession,
-    //     ApduResponseApi apduResponse) {
-
-    //     cmdCardOpenSession.setApduResponse(apduResponse);
-    //     // CL-CSS-INFORAT.1
-    //     calypsoCard.setDfRatified(cmdCardOpenSession.wasRatified());
-
-    //     byte[] recordDataRead = cmdCardOpenSession.getRecordDataRead();
-
-    //     if (recordDataRead.length > 0) {
-    //     calypsoCard.setContent(
-    //         (byte) cmdCardOpenSession.getSfi(), cmdCardOpenSession.getRecordNumber(), recordDataRead);
-    //     }
-    // }
+    /**
+     * (private)<br>
+     * Updates the {@link CalypsoCardAdapter} object with the response to an Open Secure Session
+     * command received from the card <br>
+     * The ratification status and the data read at the time of the session opening are added to the
+     * CalypsoCard.
+     *
+     * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
+     * @param cmdCardOpenSession the command.
+     * @param apduResponse the response received.
+     */
+    static void updateCalypsoCardOpenSession(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardOpenSession> cmdCardOpenSession,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
     // /**
     //  * (private)<br>
@@ -128,15 +120,15 @@ private:
 
     /**
      * (private)<br>
-     * Updates the {@link CalypsoCardAdapter} object with the response to a 'Read Records' command
+     * Updates the CalypsoCardAdapter object with the response to a 'Read Records' command
      * received from the card.<br>
-     * The records read are added to the {@link CalypsoCardAdapter} file structure.
+     * The records read are added to the CalypsoCardAdapter file structure.
      *
      * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
      * @param cmdCardReadRecords the command.
      * @param apduResponse the response received.
      * @param isSessionOpen true when a secure session is open.
-     * @throws CardCommandException if a response from the card was unexpected
+     * @throw CardCommandException if a response from the card was unexpected
      */
     static void updateCalypsoCardReadRecords(
         const std::shared_ptr<CalypsoCardAdapter> calypsoCard,
@@ -144,93 +136,53 @@ private:
         const std::shared_ptr<ApduResponseApi> apduResponse,
         const bool isSessionOpen);
 
-    // /**
-    //  * (private)<br>
-    //  * Sets the response to the command and check the status for strict and best effort mode.
-    //  *
-    //  * @param command The command.
-    //  * @param isSessionOpen Is session open?
-    //  * @throws CardCommandException If needed.
-    //  */
-    // private static void checkResponseStatusForStrictAndBestEffortMode(
-    //     AbstractCardCommand command, boolean isSessionOpen) throws CardCommandException {
-    //     if (isSessionOpen) {
-    //     command.checkStatus();
-    //     } else {
-    //     try {
-    //         command.checkStatus();
-    //     } catch (CardDataAccessException e) {
-    //         // best effort mode, do not throw exception for "file not found" and "record not found"
-    //         // errors.
-    //         if (command.getApduResponse().getStatusWord() != 0x6A82
-    //             && command.getApduResponse().getStatusWord() != 0x6A83) {
-    //         throw e;
-    //         }
-    //     }
-    //     }
-    // }
+    /**
+     * (private)<br>
+     * Sets the response to the command and check the status for strict and best effort mode.
+     *
+     * @param command The command.
+     * @param isSessionOpen Is session open?
+     * @throw CardCommandException If needed.
+     */
+    static void checkResponseStatusForStrictAndBestEffortMode(
+        const std::shared_ptr<AbstractCardCommand> command, const bool isSessionOpen);
 
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link SearchCommandDataAdapter} and the {@link CalypsoCardAdapter} objects with
-    //  * the response to a "Search Record Multiple" command received from the card.<br>
-    //  * The first matching record content is added to the {@link CalypsoCardAdapter} file structure if
-    //  * requested.
-    //  *
-    //  * @param calypsoCard The {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardSearchRecordMultiple The command.
-    //  * @param apduResponse The response received.
-    //  * @param isSessionOpen True when a secure session is open.
-    //  * @throws CardCommandException If a response from the card was unexpected.
-    //  */
-    // private static void updateCalypsoCardSearchRecordMultiple(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardSearchRecordMultiple cmdCardSearchRecordMultiple,
-    //     ApduResponseApi apduResponse,
-    //     boolean isSessionOpen)
-    //     throws CardCommandException {
+    /**
+     * (private)<br>
+     * Updates the SearchCommandDataAdapter and the CalypsoCardAdapter objects with
+     * the response to a "Search Record Multiple" command received from the card.<br>
+     * The first matching record content is added to the CalypsoCardAdapter file structure if
+     * requested.
+     *
+     * @param calypsoCard The CalypsoCardAdapter object to update.
+     * @param cmdCardSearchRecordMultiple The command.
+     * @param apduResponse The response received.
+     * @param isSessionOpen True when a secure session is open.
+     * @throw CardCommandException If a response from the card was unexpected.
+     */
+    static void updateCalypsoCardSearchRecordMultiple(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardSearchRecordMultiple> cmdCardSearchRecordMultiple,
+        const std::shared_ptr<ApduResponseApi> apduResponse,
+        const bool isSessionOpen);
 
-    //     cmdCardSearchRecordMultiple.setApduResponse(apduResponse);
-    //     checkResponseStatusForStrictAndBestEffortMode(cmdCardSearchRecordMultiple, isSessionOpen);
-
-    //     if (cmdCardSearchRecordMultiple.getFirstMatchingRecordContent().length > 0) {
-    //     calypsoCard.setContent(
-    //         cmdCardSearchRecordMultiple.getSearchCommandData().getSfi(),
-    //         cmdCardSearchRecordMultiple.getSearchCommandData().getMatchingRecordNumbers().get(0),
-    //         cmdCardSearchRecordMultiple.getFirstMatchingRecordContent());
-    //     }
-    // }
-
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to a 'Read Record Multiple'
-    //  * command received from the card.<br>
-    //  * The records read are added to the {@link CalypsoCardAdapter} file structure.
-    //  *
-    //  * @param calypsoCard The {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardReadRecordMultiple The command.
-    //  * @param apduResponse The response received.
-    //  * @param isSessionOpen True when a secure session is open.
-    //  * @throws CardCommandException If a response from the card was unexpected.
-    //  */
-    // private static void updateCalypsoCardReadRecordMultiple(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardReadRecordMultiple cmdCardReadRecordMultiple,
-    //     ApduResponseApi apduResponse,
-    //     boolean isSessionOpen)
-    //     throws CardCommandException {
-
-    //     cmdCardReadRecordMultiple.setApduResponse(apduResponse);
-    //     checkResponseStatusForStrictAndBestEffortMode(cmdCardReadRecordMultiple, isSessionOpen);
-
-    //     for (Map.Entry<Integer, byte[]> entry : cmdCardReadRecordMultiple.getResults().entrySet()) {
-    //     calypsoCard.setContent(
-    //         (byte) cmdCardReadRecordMultiple.getSfi(),
-    //         entry.getKey(),
-    //         entry.getValue(),
-    //         cmdCardReadRecordMultiple.getOffset());
-    //     }
-    // }
+    /**
+     * (private)<br>
+     * Updates the CalypsoCardAdapter object with the response to a 'Read Record Multiple'
+     * command received from the card.<br>
+     * The records read are added to the CalypsoCardAdapter file structure.
+     *
+     * @param calypsoCard The {@link CalypsoCardAdapter} object to update.
+     * @param cmdCardReadRecordMultiple The command.
+     * @param apduResponse The response received.
+     * @param isSessionOpen True when a secure session is open.
+     * @throw CardCommandException If a response from the card was unexpected.
+     */
+    static void updateCalypsoCardReadRecordMultiple(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardReadRecordMultiple> cmdCardReadRecordMultiple,
+        const std::shared_ptr<ApduResponseApi> apduResponse,
+        const bool isSessionOpen);
 
     // /**
     //  * (private)<br>
@@ -258,143 +210,86 @@ private:
     //         cmdCardReadBinary.getSfi(), 1, apduResponse.getDataOut(), cmdCardReadBinary.getOffset());
     // }
 
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to a Select File command
-    //  * received from the card.<br>
-    //  * Depending on the content of the response, either a {@link FileHeaderAdapter} is added or the
-    //  * {@link DirectoryHeaderAdapter} is updated
-    //  *
-    //  * @param calypsoCard The {@link CalypsoCardAdapter} object to update.
-    //  * @param command The command.
-    //  * @param apduResponse The response received.
-    //  * @throws CardCommandException If a response from the card was unexpected.
-    //  */
-    // private static void updateCalypsoCardWithFcp(
-    //     CalypsoCardAdapter calypsoCard, AbstractCardCommand command, ApduResponseApi apduResponse)
-    //     throws CardCommandException {
+    /**
+     * (private)<br>
+     * Updates the {@link CalypsoCardAdapter} object with the response to a Select File command
+     * received from the card.<br>
+     * Depending on the content of the response, either a {@link FileHeaderAdapter} is added or the
+     * {@link DirectoryHeaderAdapter} is updated
+     *
+     * @param calypsoCard The {@link CalypsoCardAdapter} object to update.
+     * @param command The command.
+     * @param apduResponse The response received.
+     * @throw CardCommandException If a response from the card was unexpected.
+     */
+    static void updateCalypsoCardWithFcp(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<AbstractCardCommand> command,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    //     command.setApduResponse(apduResponse).checkStatus();
+    /**
+     * (private)<br>
+     * Updates the CalypsoCardAdapter object with the response to a "Get Data" command for
+     * GetDataTag::EF_LIST tag received from the card.
+     *
+     * <p>Non-existing file headers will be created for each received descriptor. Existing file
+     * headers will remain unchanged.
+     *
+     * @param calypsoCard The CalypsoCardAdapter object to update.
+     * @param command The command.
+     * @param apduResponse The response received.
+     * @throw CardCommandException If a response from the card was unexpected.
+     */
+    static void updateCalypsoCardWithEfList(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardGetDataEfList> command,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    //     byte[] proprietaryInformation;
-    //     if (command.getCommandRef() == CalypsoCardCommand.SELECT_FILE) {
-    //     proprietaryInformation = ((CmdCardSelectFile) command).getProprietaryInformation();
-    //     } else {
-    //     proprietaryInformation = ((CmdCardGetDataFcp) command).getProprietaryInformation();
-    //     }
-    //     byte sfi = proprietaryInformation[SEL_SFI_OFFSET];
-    //     byte fileType = proprietaryInformation[SEL_TYPE_OFFSET];
-    //     switch (fileType) {
-    //     case FILE_TYPE_MF:
-    //     case FILE_TYPE_DF:
-    //         DirectoryHeader directoryHeader = createDirectoryHeader(proprietaryInformation);
-    //         calypsoCard.setDirectoryHeader(directoryHeader);
-    //         break;
-    //     case FILE_TYPE_EF:
-    //         FileHeaderAdapter fileHeader = createFileHeader(proprietaryInformation);
-    //         calypsoCard.setFileHeader(sfi, fileHeader);
-    //         break;
-    //     default:
-    //         throw new IllegalStateException(String.format("Unknown file type: %02Xh", fileType));
-    //     }
-    // }
+    /**
+     * (private)<br>
+     * Updates the CalypsoCardAdapter object with the response to a "Get Data" command for
+     * GetDataTag::TRACEABILITY_INFORMATION tag received from
+     * the card.
+     *
+     * @param calypsoCard The CalypsoCardAdapter object to update.
+     * @param command The command.
+     * @param apduResponse The response received.
+     * @throw CardCommandException if a response from the card was unexpected.
+     */
+    static void updateCalypsoCardWithTraceabilityInformation(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardGetDataTraceabilityInformation> command,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to a "Get Data" command for
-    //  * {@link org.calypsonet.terminal.calypso.GetDataTag#EF_LIST} tag received from the card.
-    //  *
-    //  * <p>Non-existing file headers will be created for each received descriptor. Existing file
-    //  * headers will remain unchanged.
-    //  *
-    //  * @param calypsoCard The {@link CalypsoCardAdapter} object to update.
-    //  * @param command The command.
-    //  * @param apduResponse The response received.
-    //  * @throws CardCommandException If a response from the card was unexpected.
-    //  */
-    // private static void updateCalypsoCardWithEfList(
-    //     CalypsoCardAdapter calypsoCard, CmdCardGetDataEfList command, ApduResponseApi apduResponse)
-    //     throws CardCommandException {
+    /**
+     * (private)<br>
+     * Updates the {@link CalypsoCardAdapter} object with the response to an "Update Record" command
+     * sent and received from the card.
+     *
+     * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
+     * @param cmdCardUpdateRecord the command.
+     * @param apduResponse the response received.
+     * @throw CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoCardUpdateRecord(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardUpdateRecord> cmdCardUpdateRecord,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    //     command.setApduResponse(apduResponse).checkStatus();
-
-    //     Map<FileHeaderAdapter, Byte> fileHeaderToSfiMap = command.getEfHeaders();
-
-    //     for (Map.Entry<FileHeaderAdapter, Byte> entry : fileHeaderToSfiMap.entrySet()) {
-    //     calypsoCard.setFileHeader(entry.getValue(), entry.getKey());
-    //     }
-    // }
-
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to a "Get Data" command for
-    //  * {@link org.calypsonet.terminal.calypso.GetDataTag#TRACEABILITY_INFORMATION} tag received from
-    //  * the card.
-    //  *
-    //  * @param calypsoCard The {@link CalypsoCardAdapter} object to update.
-    //  * @param command The command.
-    //  * @param apduResponse The response received.
-    //  * @throws CardCommandException if a response from the card was unexpected.
-    //  */
-    // private static void updateCalypsoCardWithTraceabilityInformation(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardGetDataTraceabilityInformation command,
-    //     ApduResponseApi apduResponse)
-    //     throws CardCommandException {
-
-    //     command.setApduResponse(apduResponse).checkStatus();
-
-    //     calypsoCard.setTraceabilityInformation(apduResponse.getDataOut());
-    // }
-
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to an "Update Record" command
-    //  * sent and received from the card.
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardUpdateRecord the command.
-    //  * @param apduResponse the response received.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoCardUpdateRecord(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardUpdateRecord cmdCardUpdateRecord,
-    //     ApduResponseApi apduResponse)
-    //     throws CardCommandException {
-
-    //     cmdCardUpdateRecord.setApduResponse(apduResponse).checkStatus();
-
-    //     calypsoCard.setContent(
-    //         (byte) cmdCardUpdateRecord.getSfi(),
-    //         cmdCardUpdateRecord.getRecordNumber(),
-    //         cmdCardUpdateRecord.getData());
-    // }
-
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to a "Write Record" command
-    //  * sent and received from the card.
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardWriteRecord the command.
-    //  * @param apduResponse the response received.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoCardWriteRecord(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardWriteRecord cmdCardWriteRecord,
-    //     ApduResponseApi apduResponse)
-    //     throws CardCommandException {
-
-    //     cmdCardWriteRecord.setApduResponse(apduResponse).checkStatus();
-
-    //     calypsoCard.fillContent(
-    //         (byte) cmdCardWriteRecord.getSfi(),
-    //         cmdCardWriteRecord.getRecordNumber(),
-    //         cmdCardWriteRecord.getData(),
-    //         0);
-    // }
+    /**
+     * (private)<br>
+     * Updates the CalypsoCardAdapter object with the response to a "Write Record" command
+     * sent and received from the card.
+     *
+     * @param calypsoCard the CalypsoCardAdapter object to update.
+     * @param cmdCardWriteRecord the command.
+     * @param apduResponse the response received.
+     * @throws CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoCardWriteRecord(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardWriteRecord> cmdCardWriteRecord,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
     // /**
     //  * (private)<br>
@@ -446,79 +341,53 @@ private:
     //         cmdCardWriteBinary.getOffset());
     // }
 
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to a Read Records command
-    //  * received from the card.<br>
-    //  * The records read are added to the {@link CalypsoCardAdapter} file structure.
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardAppendRecord the command.
-    //  * @param apduResponse the response received.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoCardAppendRecord(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardAppendRecord cmdCardAppendRecord,
-    //     ApduResponseApi apduResponse)
-    //     throws CardCommandException {
+    /**
+     * (private)<br>
+     * Updates the {@link CalypsoCardAdapter} object with the response to a Read Records command
+     * received from the card.<br>
+     * The records read are added to the {@link CalypsoCardAdapter} file structure.
+     *
+     * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
+     * @param cmdCardAppendRecord the command.
+     * @param apduResponse the response received.
+     * @throw CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoCardAppendRecord(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardAppendRecord> cmdCardAppendRecord,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    //     cmdCardAppendRecord.setApduResponse(apduResponse).checkStatus();
+    /**
+     * (private)<br>
+     * Updates the {@link CalypsoCardAdapter} object with the response to a Decrease/Increase command
+     * received from the card <br>
+     * The counter value is updated in the {@link CalypsoCardAdapter} file structure.
+     *
+     * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
+     * @param cmdCardIncreaseOrDecrease the command.
+     * @param apduResponse the response received.
+     * @throw CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoCardIncreaseOrDecrease(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardIncreaseOrDecrease> cmdCardIncreaseOrDecrease,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    //     calypsoCard.addCyclicContent(
-    //         (byte) cmdCardAppendRecord.getSfi(), cmdCardAppendRecord.getData());
-    // }
-
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to a Decrease/Increase command
-    //  * received from the card <br>
-    //  * The counter value is updated in the {@link CalypsoCardAdapter} file structure.
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardIncreaseOrDecrease the command.
-    //  * @param apduResponse the response received.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoCardIncreaseOrDecrease(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardIncreaseOrDecrease cmdCardIncreaseOrDecrease,
-    //     ApduResponseApi apduResponse)
-    //     throws CardCommandException {
-
-    //     cmdCardIncreaseOrDecrease.setApduResponse(apduResponse).checkStatus();
-
-    //     calypsoCard.setCounter(
-    //         (byte) cmdCardIncreaseOrDecrease.getSfi(),
-    //         cmdCardIncreaseOrDecrease.getCounterNumber(),
-    //         apduResponse.getDataOut());
-    // }
-
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to a Decrease/Increase Multiple
-    //  * command received from the card <br>
-    //  * The counter value is updated in the {@link CalypsoCardAdapter} file structure.
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardIncreaseOrDecreaseMultiple the command.
-    //  * @param apduResponse the response received.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoCardIncreaseOrDecreaseMultiple(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardIncreaseOrDecreaseMultiple cmdCardIncreaseOrDecreaseMultiple,
-    //     ApduResponseApi apduResponse)
-    //     throws CardCommandException {
-
-    //     cmdCardIncreaseOrDecreaseMultiple.setApduResponse(apduResponse).checkStatus();
-
-    //     for (Map.Entry<Integer, byte[]> entry :
-    //         cmdCardIncreaseOrDecreaseMultiple.getNewCounterValues().entrySet()) {
-    //     calypsoCard.setCounter(
-    //         (byte) cmdCardIncreaseOrDecreaseMultiple.getSfi(), entry.getKey(), entry.getValue());
-    //     }
-    // }
+    /**
+     * (private)<br>
+     * Updates the {@link CalypsoCardAdapter} object with the response to a Decrease/Increase Multiple
+     * command received from the card <br>
+     * The counter value is updated in the {@link CalypsoCardAdapter} file structure.
+     *
+     * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
+     * @param cmdCardIncreaseOrDecreaseMultiple the command.
+     * @param apduResponse the response received.
+     * @throw CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoCardIncreaseOrDecreaseMultiple(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardIncreaseOrDecreaseMultiple> cmdCardIncreaseOrDecreaseMultiple,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
     // /**
     //  * (private)<br>
@@ -663,127 +532,36 @@ private:
     //     cmdCardInvalidateRehabilitate.setApduResponse(apduResponse).checkStatus();
     // }
 
-    // /**
-    //  * (private)<br>
-    //  * Parses the proprietaryInformation field of a file identified as an DF and create a {@link
-    //  * DirectoryHeader}
-    //  *
-    //  * @param proprietaryInformation from the response to a Select File command.
-    //  * @return A {@link DirectoryHeader} object
-    //  */
-    // private static DirectoryHeader createDirectoryHeader(byte[] proprietaryInformation) {
-    //     byte[] accessConditions = new byte[SEL_AC_LENGTH];
-    //     System.arraycopy(proprietaryInformation, SEL_AC_OFFSET, accessConditions, 0, SEL_AC_LENGTH);
+    /**
+     * (private)<br>
+     * Parses the proprietaryInformation field of a file identified as an DF and create a {@link
+     * DirectoryHeader}
+     *
+     * @param proprietaryInformation from the response to a Select File command.
+     * @return A DirectoryHeader object
+     */
+    static const std::shared_ptr<DirectoryHeader> createDirectoryHeader(
+        const std::vector<uint8_t>& proprietaryInformation);
 
-    //     byte[] keyIndexes = new byte[SEL_NKEY_LENGTH];
-    //     System.arraycopy(proprietaryInformation, SEL_NKEY_OFFSET, keyIndexes, 0, SEL_NKEY_LENGTH);
+    /**
+     * (private)<br>
+     * Converts the EF type value from the card into a ElementaryFile::Type enum
+     *
+     * @param efType the value returned by the card.
+     * @return The corresponding ElementaryFile::Type
+     */
+    static ElementaryFile::Type getEfTypeFromCardValue(const uint8_t efType);
 
-    //     byte dfStatus = proprietaryInformation[SEL_DF_STATUS_OFFSET];
-
-    //     short lid =
-    //         (short)
-    //             (((proprietaryInformation[SEL_LID_OFFSET] << 8) & 0xff00)
-    //                 | (proprietaryInformation[SEL_LID_OFFSET + 1] & 0x00ff));
-
-    //     return DirectoryHeaderAdapter.builder()
-    //         .lid(lid)
-    //         .accessConditions(accessConditions)
-    //         .keyIndexes(keyIndexes)
-    //         .dfStatus(dfStatus)
-    //         .kvc(WriteAccessLevel.PERSONALIZATION, proprietaryInformation[SEL_KVCS_OFFSET])
-    //         .kvc(WriteAccessLevel.LOAD, proprietaryInformation[SEL_KVCS_OFFSET + 1])
-    //         .kvc(WriteAccessLevel.DEBIT, proprietaryInformation[SEL_KVCS_OFFSET + 2])
-    //         .kif(WriteAccessLevel.PERSONALIZATION, proprietaryInformation[SEL_KIFS_OFFSET])
-    //         .kif(WriteAccessLevel.LOAD, proprietaryInformation[SEL_KIFS_OFFSET + 1])
-    //         .kif(WriteAccessLevel.DEBIT, proprietaryInformation[SEL_KIFS_OFFSET + 2])
-    //         .build();
-    // }
-
-    // /**
-    //  * (private)<br>
-    //  * Converts the EF type value from the card into a {@link ElementaryFile.Type} enum
-    //  *
-    //  * @param efType the value returned by the card.
-    //  * @return The corresponding {@link ElementaryFile.Type}
-    //  */
-    // private static ElementaryFile.Type getEfTypeFromCardValue(byte efType) {
-    //     ElementaryFile.Type fileType;
-    //     switch (efType) {
-    //     case EF_TYPE_BINARY:
-    //         fileType = ElementaryFile.Type.BINARY;
-    //         break;
-    //     case EF_TYPE_LINEAR:
-    //         fileType = ElementaryFile.Type.LINEAR;
-    //         break;
-    //     case EF_TYPE_CYCLIC:
-    //         fileType = ElementaryFile.Type.CYCLIC;
-    //         break;
-    //     case EF_TYPE_SIMULATED_COUNTERS:
-    //         fileType = ElementaryFile.Type.SIMULATED_COUNTERS;
-    //         break;
-    //     case EF_TYPE_COUNTERS:
-    //         fileType = ElementaryFile.Type.COUNTERS;
-    //         break;
-    //     default:
-    //         throw new IllegalStateException("Unknown EF Type: " + efType);
-    //     }
-    //     return fileType;
-    // }
-
-    // /**
-    //  * (private)<br>
-    //  * Parses the proprietaryInformation field of a file identified as an EF and create a {@link
-    //  * FileHeaderAdapter}
-    //  *
-    //  * @param proprietaryInformation from the response to a Select File command.
-    //  * @return A {@link FileHeaderAdapter} object
-    //  */
-    // private static FileHeaderAdapter createFileHeader(byte[] proprietaryInformation) {
-
-    //     ElementaryFile.Type fileType =
-    //         getEfTypeFromCardValue(proprietaryInformation[SEL_EF_TYPE_OFFSET]);
-
-    //     int recordSize;
-    //     int recordsNumber;
-    //     if (fileType == ElementaryFile.Type.BINARY) {
-    //     recordSize =
-    //         ((proprietaryInformation[SEL_REC_SIZE_OFFSET] << 8) & 0x0000ff00)
-    //             | (proprietaryInformation[SEL_NUM_REC_OFFSET] & 0x000000ff);
-    //     recordsNumber = 1;
-    //     } else {
-    //     recordSize = proprietaryInformation[SEL_REC_SIZE_OFFSET];
-    //     recordsNumber = proprietaryInformation[SEL_NUM_REC_OFFSET];
-    //     }
-
-    //     byte[] accessConditions = new byte[SEL_AC_LENGTH];
-    //     System.arraycopy(proprietaryInformation, SEL_AC_OFFSET, accessConditions, 0, SEL_AC_LENGTH);
-
-    //     byte[] keyIndexes = new byte[SEL_NKEY_LENGTH];
-    //     System.arraycopy(proprietaryInformation, SEL_NKEY_OFFSET, keyIndexes, 0, SEL_NKEY_LENGTH);
-
-    //     byte dfStatus = proprietaryInformation[SEL_DF_STATUS_OFFSET];
-
-    //     short sharedReference =
-    //         (short)
-    //             (((proprietaryInformation[SEL_DATA_REF_OFFSET] << 8) & 0xff00)
-    //                 | (proprietaryInformation[SEL_DATA_REF_OFFSET + 1] & 0x00ff));
-
-    //     short lid =
-    //         (short)
-    //             (((proprietaryInformation[SEL_LID_OFFSET] << 8) & 0xff00)
-    //                 | (proprietaryInformation[SEL_LID_OFFSET + 1] & 0x00ff));
-
-    //     return FileHeaderAdapter.builder()
-    //         .lid(lid)
-    //         .recordsNumber(recordsNumber)
-    //         .recordSize(recordSize)
-    //         .type(fileType)
-    //         .accessConditions(Arrays.copyOf(accessConditions, accessConditions.length))
-    //         .keyIndexes(Arrays.copyOf(keyIndexes, keyIndexes.length))
-    //         .dfStatus(dfStatus)
-    //         .sharedReference(sharedReference)
-    //         .build();
-    // }
+    /**
+     * (private)<br>
+     * Parses the proprietaryInformation field of a file identified as an EF and create a
+     * FileHeaderAdapter
+     *
+     * @param proprietaryInformation from the response to a Select File command.
+     * @return A FileHeaderAdapter object
+     */
+    static const std::shared_ptr<FileHeaderAdapter> createFileHeader(
+        const std::vector<uint8_t>& proprietaryInformation);
 };
 
 }

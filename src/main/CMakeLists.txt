@@ -85,15 +85,23 @@ ADD_LIBRARY(
     ${CMAKE_CURRENT_SOURCE_DIR}/CardSecuritySettingAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardSelectionRequestAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardSelectorAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardAppendRecord.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetDataFci.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetDataEfList.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetDataFcp.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetDataTraceabilityInformation.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardIncreaseOrDecrease.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardIncreaseOrDecreaseMultiple.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardOpenSession.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardReadRecordMultiple.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardReadRecords.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSearchRecordMultiple.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSelectFile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSvDebit.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSvReload.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSvUndebit.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardUpdateRecord.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardWriteRecord.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamCardCipherPin.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamCardGenerateKey.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamDigestAuthenticate.cpp
@@ -107,6 +115,7 @@ ADD_LIBRARY(
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamSvPrepareDebit.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamSvPrepareLoad.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamSvPrepareUndebit.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/DirectoryHeaderAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ElementaryFileAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FileDataAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FileHeaderAdapter.cpp
