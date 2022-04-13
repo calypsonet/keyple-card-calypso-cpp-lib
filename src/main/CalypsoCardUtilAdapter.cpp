@@ -16,6 +16,7 @@
 #include "CalypsoCardCommand.h"
 #include "CalypsoCardConstant.h"
 #include "CardDataAccessException.h"
+#include "CardPinException.h"
 #include "CmdCardGetDataFci.h"
 #include "CmdCardGetDataFcp.h"
 #include "CmdCardSearchRecordMultiple.h"
@@ -47,7 +48,7 @@ void CalypsoCardUtilAdapter::updateCalypsoCard(
                                      std::dynamic_pointer_cast<CmdCardReadRecords>(command),
                                      apduResponse,
                                      isSessionOpen);
-    } else if (command->getCommandRef() ==  CalypsoCardCommand::GET_DATA) {
+    } else if (command->getCommandRef() == CalypsoCardCommand::GET_DATA) {
         if (std::dynamic_pointer_cast<CmdCardGetDataFci>(command)) {
             calypsoCard->initializeWithFci(apduResponse);
         } else if (std::dynamic_pointer_cast<CmdCardGetDataFcp>(command)) {
@@ -64,88 +65,98 @@ void CalypsoCardUtilAdapter::updateCalypsoCard(
         } else {
             throw IllegalStateException("Unknown GET DATA command reference.");
         }
-    } else if (command->getCommandRef() ==  CalypsoCardCommand::SEARCH_RECORD_MULTIPLE) {
+    } else if (command->getCommandRef() == CalypsoCardCommand::SEARCH_RECORD_MULTIPLE) {
         updateCalypsoCardSearchRecordMultiple(
             calypsoCard,
             std::dynamic_pointer_cast<CmdCardSearchRecordMultiple>(command),
             apduResponse,
             isSessionOpen);
-    } else if (command->getCommandRef() ==  CalypsoCardCommand::READ_RECORD_MULTIPLE) {
+    } else if (command->getCommandRef() == CalypsoCardCommand::READ_RECORD_MULTIPLE) {
         updateCalypsoCardReadRecordMultiple(
             calypsoCard,
             std::dynamic_pointer_cast<CmdCardReadRecordMultiple>(command),
             apduResponse,
             isSessionOpen);
-    } else if (command->getCommandRef() ==  CalypsoCardCommand::SELECT_FILE) {
+    } else if (command->getCommandRef() == CalypsoCardCommand::SELECT_FILE) {
         updateCalypsoCardWithFcp(calypsoCard, command, apduResponse);
-    } else if (command->getCommandRef() ==  CalypsoCardCommand::UPDATE_RECORD) {
-        updateCalypsoCardUpdateRecord(calypsoCard,
-                                     std::dynamic_pointer_cast<CmdCardUpdateRecord>(command),
-                                     apduResponse);
-    } else if (command->getCommandRef() ==  CalypsoCardCommand::WRITE_RECORD) {
+    } else if (command->getCommandRef() == CalypsoCardCommand::UPDATE_RECORD) {
+        updateCalypsoCardUpdateRecord(
+            calypsoCard,
+            std::dynamic_pointer_cast<CmdCardUpdateRecord>(command),
+            apduResponse);
+    } else if (command->getCommandRef() == CalypsoCardCommand::WRITE_RECORD) {
         updateCalypsoCardWriteRecord(
             calypsoCard,
             std::dynamic_pointer_cast<CmdCardWriteRecord>(command),
             apduResponse);
-    } else if (command->getCommandRef() ==  CalypsoCardCommand::APPEND_RECORD) {
-        updateCalypsoCardAppendRecord(calypsoCard,
-                                      std::dynamic_pointer_cast<CmdCardAppendRecord>(command),
-                                      apduResponse);
-    } else if (command->getCommandRef() ==  CalypsoCardCommand::INCREASE ||
-               command->getCommandRef() ==  CalypsoCardCommand::DECREASE) {
+    } else if (command->getCommandRef() == CalypsoCardCommand::APPEND_RECORD) {
+        updateCalypsoCardAppendRecord(
+            calypsoCard,
+            std::dynamic_pointer_cast<CmdCardAppendRecord>(command),
+            apduResponse);
+    } else if (command->getCommandRef() == CalypsoCardCommand::INCREASE ||
+               command->getCommandRef() == CalypsoCardCommand::DECREASE) {
         updateCalypsoCardIncreaseOrDecrease(
             calypsoCard,
             std::dynamic_pointer_cast<CmdCardIncreaseOrDecrease>(command),
             apduResponse);
-    } else if (command->getCommandRef() ==  CalypsoCardCommand::INCREASE_MULTIPLE ||
-               command->getCommandRef() ==  CalypsoCardCommand::DECREASE_MULTIPLE) {
+    } else if (command->getCommandRef() == CalypsoCardCommand::INCREASE_MULTIPLE ||
+               command->getCommandRef() == CalypsoCardCommand::DECREASE_MULTIPLE) {
         updateCalypsoCardIncreaseOrDecreaseMultiple(
             calypsoCard,
             std::dynamic_pointer_cast<CmdCardIncreaseOrDecreaseMultiple>(command),
             apduResponse);
-    } else if (command->getCommandRef() ==  CalypsoCardCommand::OPEN_SESSION) {
-        updateCalypsoCardOpenSession(calypsoCard,
-                                     std::dynamic_pointer_cast<CmdCardOpenSession>(command),
-                                     apduResponse);
-    // case CLOSE_SESSION:
-    //     updateCalypsoCardCloseSession((CmdCardCloseSession) command, apduResponse);
-    //     break;
-    // case READ_BINARY:
-    //     updateCalypsoCardReadBinary(
-    //         calypsoCard, (CmdCardReadBinary) command, apduResponse, isSessionOpen);
-    //     break;
-    // case UPDATE_BINARY:
-    //     updateCalypsoCardUpdateBinary(
-    //         calypsoCard, (CmdCardUpdateOrWriteBinary) command, apduResponse);
-    //     break;
-    // case WRITE_BINARY:
-    //     updateCalypsoCardWriteBinary(
-    //         calypsoCard, (CmdCardUpdateOrWriteBinary) command, apduResponse);
-    //     break;
-    // case GET_CHALLENGE:
-    //     updateCalypsoCardGetChallenge(calypsoCard, (CmdCardGetChallenge) command, apduResponse);
-    //     break;
-    // case VERIFY_PIN:
-    //     updateCalypsoVerifyPin(calypsoCard, (CmdCardVerifyPin) command, apduResponse);
-    //     break;
-    // case SV_GET:
-    //     updateCalypsoCardSvGet(calypsoCard, (CmdCardSvGet) command, apduResponse);
-    //     break;
-    // case SV_RELOAD:
-    // case SV_DEBIT:
-    // case SV_UNDEBIT:
-    //     updateCalypsoCardSvOperation(calypsoCard, command, apduResponse);
-    //     break;
-    // case INVALIDATE:
-    // case REHABILITATE:
-    //     updateCalypsoInvalidateRehabilitate(command, apduResponse);
-    //     break;
-    // case CHANGE_PIN:
-    //     updateCalypsoChangePin((CmdCardChangePin) command, apduResponse);
-    //     break;
-    // case CHANGE_KEY:
-    //     updateCalypsoChangeKey((CmdCardChangeKey) command, apduResponse);
-    //     break;
+    } else if (command->getCommandRef() == CalypsoCardCommand::OPEN_SESSION) {
+        updateCalypsoCardOpenSession(
+            calypsoCard,
+            std::dynamic_pointer_cast<CmdCardOpenSession>(command),
+            apduResponse);
+    } else if (command->getCommandRef() == CalypsoCardCommand::CLOSE_SESSION) {
+        updateCalypsoCardCloseSession(
+            std::dynamic_pointer_cast<CmdCardCloseSession>(command),
+            apduResponse);
+    } else if (command->getCommandRef() == CalypsoCardCommand::READ_BINARY) {
+        updateCalypsoCardReadBinary(
+            calypsoCard,
+            std::dynamic_pointer_cast<CmdCardReadBinary>(command),
+            apduResponse,
+            isSessionOpen);
+    } else if (command->getCommandRef() == CalypsoCardCommand::UPDATE_BINARY) {
+        updateCalypsoCardUpdateBinary(
+            calypsoCard,
+            std::dynamic_pointer_cast<CmdCardUpdateOrWriteBinary>(command),
+            apduResponse);
+    } else if (command->getCommandRef() == CalypsoCardCommand::WRITE_BINARY) {
+        updateCalypsoCardWriteBinary(
+            calypsoCard,
+            std::dynamic_pointer_cast<CmdCardUpdateOrWriteBinary>(command),
+            apduResponse);
+    } else if (command->getCommandRef() == CalypsoCardCommand::GET_CHALLENGE) {
+        updateCalypsoCardGetChallenge(
+            calypsoCard,
+            std::dynamic_pointer_cast<CmdCardGetChallenge>(command),
+            apduResponse);
+    } else if (command->getCommandRef() == CalypsoCardCommand::VERIFY_PIN) {
+        updateCalypsoVerifyPin(
+            calypsoCard,
+            std::dynamic_pointer_cast<CmdCardVerifyPin>(command),
+            apduResponse);
+    } else if (command->getCommandRef() == CalypsoCardCommand::SV_GET) {
+        updateCalypsoCardSvGet(
+            calypsoCard,
+            std::dynamic_pointer_cast<CmdCardSvGet>(command),
+            apduResponse);
+    } else if (command->getCommandRef() == CalypsoCardCommand::SV_RELOAD ||
+               command->getCommandRef() == CalypsoCardCommand::SV_DEBIT ||
+               command->getCommandRef() == CalypsoCardCommand::SV_UNDEBIT) {
+        updateCalypsoCardSvOperation(calypsoCard, command, apduResponse);
+    } else if (command->getCommandRef() == CalypsoCardCommand::INVALIDATE ||
+               command->getCommandRef() == CalypsoCardCommand::REHABILITATE) {
+        updateCalypsoInvalidateRehabilitate(command, apduResponse);
+    } else if (command->getCommandRef() == CalypsoCardCommand::CHANGE_PIN) {
+        updateCalypsoChangePin(std::dynamic_pointer_cast<CmdCardChangePin>(command), apduResponse);
+    } else if (command->getCommandRef() == CalypsoCardCommand::CHANGE_KEY) {
+        updateCalypsoChangeKey(std::dynamic_pointer_cast<CmdCardChangeKey>(command), apduResponse);
     } else {
         throw IllegalStateException("Unknown command reference.");
     }
@@ -157,7 +168,6 @@ void CalypsoCardUtilAdapter::updateCalypsoCard(
     const std::vector<std::shared_ptr<ApduResponseApi>>& apduResponses,
     const bool isSessionOpen)
 {
-
     auto responseIterator = apduResponses.begin();
 
     if (!commands.empty()) {
@@ -185,6 +195,13 @@ void CalypsoCardUtilAdapter::updateCalypsoCardOpenSession(
                                 cmdCardOpenSession->getRecordNumber(),
                                 recordDataRead);
     }
+}
+
+void CalypsoCardUtilAdapter::updateCalypsoCardCloseSession(
+    std::shared_ptr<CmdCardCloseSession> cmdCardCloseSession,
+    const std::shared_ptr<ApduResponseApi> apduResponse)
+{
+    cmdCardCloseSession->setApduResponse(apduResponse).checkStatus();
 }
 
 void CalypsoCardUtilAdapter::updateCalypsoCardReadRecords(
@@ -256,6 +273,22 @@ void CalypsoCardUtilAdapter::updateCalypsoCardReadRecordMultiple(
                                 entry.second,
                                 cmdCardReadRecordMultiple->getOffset());
     }
+}
+
+void CalypsoCardUtilAdapter::updateCalypsoCardReadBinary(
+    std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+    std::shared_ptr<CmdCardReadBinary> cmdCardReadBinary,
+    const std::shared_ptr<ApduResponseApi> apduResponse,
+    const bool isSessionOpen)
+{
+
+    cmdCardReadBinary->setApduResponse(apduResponse);
+    checkResponseStatusForStrictAndBestEffortMode(cmdCardReadBinary, isSessionOpen);
+
+    calypsoCard->setContent(cmdCardReadBinary->getSfi(),
+                            1,
+                            apduResponse->getDataOut(),
+                            cmdCardReadBinary->getOffset());
 }
 
 void CalypsoCardUtilAdapter::updateCalypsoCardWithFcp(
@@ -344,6 +377,32 @@ void CalypsoCardUtilAdapter::updateCalypsoCardWriteRecord(
                              0);
 }
 
+void CalypsoCardUtilAdapter::updateCalypsoCardUpdateBinary(
+    std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+    std::shared_ptr<CmdCardUpdateOrWriteBinary> cmdCardUpdateBinary,
+    const std::shared_ptr<ApduResponseApi> apduResponse)
+{
+    cmdCardUpdateBinary->setApduResponse(apduResponse).checkStatus();
+
+    calypsoCard->setContent(cmdCardUpdateBinary->getSfi(),
+                            1,
+                            cmdCardUpdateBinary->getData(),
+                            cmdCardUpdateBinary->getOffset());
+}
+
+void CalypsoCardUtilAdapter::updateCalypsoCardWriteBinary(
+    std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+    std::shared_ptr<CmdCardUpdateOrWriteBinary> cmdCardWriteBinary,
+    const std::shared_ptr<ApduResponseApi> apduResponse)
+{
+    cmdCardWriteBinary->setApduResponse(apduResponse).checkStatus();
+
+    calypsoCard->fillContent(cmdCardWriteBinary->getSfi(),
+                             1,
+                             cmdCardWriteBinary->getData(),
+                             cmdCardWriteBinary->getOffset());
+}
+
 void CalypsoCardUtilAdapter::updateCalypsoCardAppendRecord(
     std::shared_ptr<CalypsoCardAdapter> calypsoCard,
     std::shared_ptr<CmdCardAppendRecord> cmdCardAppendRecord,
@@ -380,6 +439,82 @@ void CalypsoCardUtilAdapter::updateCalypsoCardIncreaseOrDecreaseMultiple(
                                 entry.first,
                                 entry.second);
     }
+}
+
+void CalypsoCardUtilAdapter::updateCalypsoCardGetChallenge(
+    std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+    std::shared_ptr<CmdCardGetChallenge> cmdCardGetChallenge,
+    const std::shared_ptr<ApduResponseApi> apduResponse)
+{
+    cmdCardGetChallenge->setApduResponse(apduResponse).checkStatus();
+    calypsoCard->setCardChallenge(cmdCardGetChallenge->getCardChallenge());
+}
+
+void CalypsoCardUtilAdapter::updateCalypsoVerifyPin(
+    std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+    std::shared_ptr<CmdCardVerifyPin> cmdCardVerifyPin,
+    const std::shared_ptr<ApduResponseApi> apduResponse)
+{
+    cmdCardVerifyPin->setApduResponse(apduResponse);
+    calypsoCard->setPinAttemptRemaining(cmdCardVerifyPin->getRemainingAttemptCounter());
+
+    try {
+        cmdCardVerifyPin->checkStatus();
+    } catch (const CardPinException& ex) {
+        /*
+         * Forward the exception if the operation do not target the reading of the attempt counter.
+         * Catch it silently otherwise
+         */
+        if (!cmdCardVerifyPin->isReadCounterOnly()) {
+            throw ex;
+        }
+    }
+}
+
+void CalypsoCardUtilAdapter::updateCalypsoChangePin(
+    std::shared_ptr<CmdCardChangePin> cmdCardChangePin,
+    const std::shared_ptr<ApduResponseApi> apduResponse)
+{
+    cmdCardChangePin->setApduResponse(apduResponse).checkStatus();
+}
+
+void CalypsoCardUtilAdapter::updateCalypsoChangeKey(
+    std::shared_ptr<CmdCardChangeKey> cmdCardChangeKey,
+    const std::shared_ptr<ApduResponseApi> apduResponse)
+{
+    cmdCardChangeKey->setApduResponse(apduResponse).checkStatus();
+}
+
+void CalypsoCardUtilAdapter::updateCalypsoCardSvGet(
+    std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+    std::shared_ptr<CmdCardSvGet> cmdCardSvGet,
+    const std::shared_ptr<ApduResponseApi> apduResponse)
+{
+    cmdCardSvGet->setApduResponse(apduResponse).checkStatus();
+
+    calypsoCard->setSvData(cmdCardSvGet->getCurrentKVC(),
+                           cmdCardSvGet->getSvGetCommandHeader(),
+                           cmdCardSvGet->getApduResponse()->getApdu(),
+                           cmdCardSvGet->getBalance(),
+                           cmdCardSvGet->getTransactionNumber(),
+                           cmdCardSvGet->getLoadLog(),
+                           cmdCardSvGet->getDebitLog());
+}
+
+void CalypsoCardUtilAdapter::updateCalypsoCardSvOperation(
+    std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+    std::shared_ptr<AbstractCardCommand> cmdCardSvOperation,
+    const std::shared_ptr<ApduResponseApi> apduResponse)
+{
+    cmdCardSvOperation->setApduResponse(apduResponse).checkStatus();
+    calypsoCard->setSvOperationSignature(cmdCardSvOperation->getApduResponse()->getDataOut());
+}
+
+void CalypsoCardUtilAdapter::updateCalypsoInvalidateRehabilitate(
+    std::shared_ptr<AbstractCardCommand> cmdCardInvalidateRehabilitate,
+    const std::shared_ptr<ApduResponseApi> apduResponse)
+{
+    cmdCardInvalidateRehabilitate->setApduResponse(apduResponse).checkStatus();
 }
 
 const std::shared_ptr<DirectoryHeader> CalypsoCardUtilAdapter::createDirectoryHeader(

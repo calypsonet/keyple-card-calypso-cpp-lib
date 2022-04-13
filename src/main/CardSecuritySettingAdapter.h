@@ -24,7 +24,6 @@
 /* Calypsonet Terminal Reader */
 #include "CardReader.h"
 
-
 namespace keyple {
 namespace card {
 namespace calypso {

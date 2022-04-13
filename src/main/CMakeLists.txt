@@ -17,7 +17,6 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKEYPLECARDCALYPSO_EXPORT")
 SET(CALYPSONET_CARD_DIR     "../../../calypsonet-terminal-card-cpp-api")
 SET(CALYPSONET_READER_DIR   "../../../calypsonet-terminal-reader-cpp-api")
 SET(CALYPSONET_CALYPSO_DIR  "../../../calypsonet-terminal-calypso-cpp-api")
-SET(KEYPLE_CARD_GENERIC_DIR "../../../keyple-card-generic-cpp-lib")
 SET(KEYPLE_COMMON_DIR       "../../../keyple-common-cpp-api")
 SET(KEYPLE_PLUGIN_DIR       "../../../keyple-plugin-cpp-api")
 SET(KEYPLE_UTIL_DIR         "../../../keyple-util-cpp-lib")
@@ -42,8 +41,6 @@ INCLUDE_DIRECTORIES(
     ${CALYPSONET_CALYPSO_DIR}/src/main/card
     ${CALYPSONET_CALYPSO_DIR}/src/main/sam
     ${CALYPSONET_CALYPSO_DIR}/src/main/transaction
-
-    ${KEYPLE_CARD_GENERIC_DIR}/src/main
 
     ${KEYPLE_COMMON_DIR}/src/main
 
@@ -79,28 +76,44 @@ ADD_LIBRARY(
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardConstant.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardSelectionAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoCardUtilAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoExtensionService.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoSamAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoSamCommand.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoSamResourceProfileExtensionAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CalypsoSamSelectionAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardCommandManager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardRequestAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardSecuritySettingAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardSelectionRequestAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardSelectorAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CardTransactionManagerAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardAppendRecord.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardChangeKey.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardChangePin.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardCloseSession.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetChallenge.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetDataFci.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetDataEfList.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetDataFcp.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardGetDataTraceabilityInformation.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardIncreaseOrDecrease.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardIncreaseOrDecreaseMultiple.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardInvalidate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardOpenSession.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardRatificationBuilder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardReadBinary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardReadRecordMultiple.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardReadRecords.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardRehabilitate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSearchRecordMultiple.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSelectFile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSvDebit.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSvGet.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSvReload.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardSvUndebit.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardUpdateOrWriteBinary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardUpdateRecord.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardVerifyPin.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdCardWriteRecord.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamCardCipherPin.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamCardGenerateKey.cpp
@@ -115,6 +128,7 @@ ADD_LIBRARY(
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamSvPrepareDebit.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamSvPrepareLoad.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamSvPrepareUndebit.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CmdSamUnlock.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DirectoryHeaderAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ElementaryFileAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FileDataAdapter.cpp

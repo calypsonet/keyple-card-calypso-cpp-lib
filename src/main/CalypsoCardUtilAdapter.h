@@ -21,15 +21,23 @@
 #include "AbstractCardCommand.h"
 #include "CalypsoCardAdapter.h"
 #include "CmdCardAppendRecord.h"
+#include "CmdCardChangePin.h"
+#include "CmdCardChangeKey.h"
+#include "CmdCardCloseSession.h"
+#include "CmdCardGetChallenge.h"
+#include "CmdCardGetDataEfList.h"
+#include "CmdCardGetDataTraceabilityInformation.h"
 #include "CmdCardIncreaseOrDecrease.h"
 #include "CmdCardIncreaseOrDecreaseMultiple.h"
 #include "CmdCardOpenSession.h"
 #include "CmdCardReadRecords.h"
-#include "CmdCardGetDataEfList.h"
-#include "CmdCardGetDataTraceabilityInformation.h"
+#include "CmdCardReadBinary.h"
 #include "CmdCardReadRecordMultiple.h"
 #include "CmdCardSearchRecordMultiple.h"
+#include "CmdCardSvGet.h"
+#include "CmdCardUpdateOrWriteBinary.h"
 #include "CmdCardUpdateRecord.h"
+#include "CmdCardVerifyPin.h"
 #include "CmdCardWriteRecord.h"
 
 namespace keyple {
@@ -104,19 +112,17 @@ private:
         std::shared_ptr<CmdCardOpenSession> cmdCardOpenSession,
         const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    // /**
-    //  * (private)<br>
-    //  * Checks the response to a Close Session command
-    //  *
-    //  * @param cmdCardCloseSession the command.
-    //  * @param apduResponse the response received.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoCardCloseSession(
-    //     CmdCardCloseSession cmdCardCloseSession, ApduResponseApi apduResponse)
-    //     throws CardCommandException {
-    //     cmdCardCloseSession.setApduResponse(apduResponse).checkStatus();
-    // }
+    /**
+     * (private)<br>
+     * Checks the response to a Close Session command
+     *
+     * @param cmdCardCloseSession the command.
+     * @param apduResponse the response received.
+     * @throw CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoCardCloseSession(
+        std::shared_ptr<CmdCardCloseSession> cmdCardCloseSession,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
     /**
      * (private)<br>
@@ -184,31 +190,22 @@ private:
         const std::shared_ptr<ApduResponseApi> apduResponse,
         const bool isSessionOpen);
 
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to a 'Read Binary' command
-    //  * received from the card.<br>
-    //  * The records read are added to the {@link CalypsoCardAdapter} file structure.
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardReadBinary the command.
-    //  * @param apduResponse the response received.
-    //  * @param isSessionOpen true when a secure session is open.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoCardReadBinary(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardReadBinary cmdCardReadBinary,
-    //     ApduResponseApi apduResponse,
-    //     boolean isSessionOpen)
-    //     throws CardCommandException {
-
-    //     cmdCardReadBinary.setApduResponse(apduResponse);
-    //     checkResponseStatusForStrictAndBestEffortMode(cmdCardReadBinary, isSessionOpen);
-
-    //     calypsoCard.setContent(
-    //         cmdCardReadBinary.getSfi(), 1, apduResponse.getDataOut(), cmdCardReadBinary.getOffset());
-    // }
+    /**
+     * (private)<br>
+     * Updates the {@link CalypsoCardAdapter} object with the response to a 'Read Binary' command
+     * received from the card.<br>
+     * The records read are added to the {@link CalypsoCardAdapter} file structure.
+     *
+     * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
+     * @param cmdCardReadBinary the command.
+     * @param apduResponse the response received.
+     * @param isSessionOpen true when a secure session is open.
+     * @throw CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoCardReadBinary(std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+                                            std::shared_ptr<CmdCardReadBinary> cmdCardReadBinary,
+                                            const std::shared_ptr<ApduResponseApi> apduResponse,
+                                            const bool isSessionOpen);
 
     /**
      * (private)<br>
@@ -291,55 +288,35 @@ private:
         std::shared_ptr<CmdCardWriteRecord> cmdCardWriteRecord,
         const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to an "Update Binary" command
-    //  * sent and received from the card.
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardUpdateBinary the command.
-    //  * @param apduResponse the response received.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoCardUpdateBinary(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardUpdateOrWriteBinary cmdCardUpdateBinary,
-    //     ApduResponseApi apduResponse)
-    //     throws CardCommandException {
+    /**
+     * (private)<br>
+     * Updates the CalypsoCardAdapter object with the response to an "Update Binary" command
+     * sent and received from the card.
+     *
+     * @param calypsoCard the CalypsoCardAdapter object to update.
+     * @param cmdCardUpdateBinary the command.
+     * @param apduResponse the response received.
+     * @throw CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoCardUpdateBinary(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardUpdateOrWriteBinary> cmdCardUpdateBinary,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    //     cmdCardUpdateBinary.setApduResponse(apduResponse).checkStatus();
-
-    //     calypsoCard.setContent(
-    //         cmdCardUpdateBinary.getSfi(),
-    //         1,
-    //         cmdCardUpdateBinary.getData(),
-    //         cmdCardUpdateBinary.getOffset());
-    // }
-
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to a "Write Binary" command
-    //  * sent and received from the card.
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardWriteBinary the command.
-    //  * @param apduResponse the response received.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoCardWriteBinary(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardUpdateOrWriteBinary cmdCardWriteBinary,
-    //     ApduResponseApi apduResponse)
-    //     throws CardCommandException {
-
-    //     cmdCardWriteBinary.setApduResponse(apduResponse).checkStatus();
-
-    //     calypsoCard.fillContent(
-    //         cmdCardWriteBinary.getSfi(),
-    //         1,
-    //         cmdCardWriteBinary.getData(),
-    //         cmdCardWriteBinary.getOffset());
-    // }
+    /**
+     * (private)<br>
+     * Updates the CalypsoCardAdapter object with the response to a "Write Binary" command
+     * sent and received from the card.
+     *
+     * @param calypsoCard the CalypsoCardAdapter object to update.
+     * @param cmdCardWriteBinary the command.
+     * @param apduResponse the response received.
+     * @throw CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoCardWriteBinary(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardUpdateOrWriteBinary> cmdCardWriteBinary,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
     /**
      * (private)<br>
@@ -389,148 +366,104 @@ private:
         std::shared_ptr<CmdCardIncreaseOrDecreaseMultiple> cmdCardIncreaseOrDecreaseMultiple,
         const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    // /**
-    //  * (private)<br>
-    //  * Parses the response to a Get Challenge command received from the card.<br>
-    //  * The card challenge value is stored in {@link CalypsoCardAdapter}.
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardGetChallenge the command.
-    //  * @param apduResponse the response received.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoCardGetChallenge(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardGetChallenge cmdCardGetChallenge,
-    //     ApduResponseApi apduResponse)
-    //     throws CardCommandException {
+    /**
+     * (private)<br>
+     * Parses the response to a Get Challenge command received from the card.<br>
+     * The card challenge value is stored in CalypsoCardAdapter.
+     *
+     * @param calypsoCard the CalypsoCardAdapter object to update.
+     * @param cmdCardGetChallenge the command.
+     * @param apduResponse the response received.
+     * @throw CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoCardGetChallenge(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardGetChallenge> cmdCardGetChallenge,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    //     cmdCardGetChallenge.setApduResponse(apduResponse).checkStatus();
-    //     calypsoCard.setCardChallenge(cmdCardGetChallenge.getCardChallenge());
-    // }
+    /**
+     * (private)<br>
+     * Updates the CalypsoCardAdapter object with the response to a "Verify Pin" command
+     * received from the card.<br>
+     * The PIN attempt counter value is stored in the CalypsoCardAdapter<br>
+     * CardPinException are filtered when the initial command targets the reading of the attempt
+     * counter.
+     *
+     * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
+     * @param cmdCardVerifyPin the command.
+     * @param apduResponse the response received.
+     * @throw CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoVerifyPin(std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+                                       std::shared_ptr<CmdCardVerifyPin> cmdCardVerifyPin,
+                                       const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to a "Verify Pin" command
-    //  * received from the card.<br>
-    //  * The PIN attempt counter value is stored in the {@link CalypsoCardAdapter}<br>
-    //  * CardPinException are filtered when the initial command targets the reading of the attempt
-    //  * counter.
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardVerifyPin the command.
-    //  * @param apduResponse the response received.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoVerifyPin(
-    //     CalypsoCardAdapter calypsoCard,
-    //     CmdCardVerifyPin cmdCardVerifyPin,
-    //     ApduResponseApi apduResponse)
-    //     throws CardCommandException {
+    /**
+     * (private)<br>
+     * Checks the status of the response to a "Change Pin" command received from the card
+     *
+     * @param cmdCardChangePin the command.
+     * @param apduResponse the response received.
+     */
+    static void updateCalypsoChangePin(std::shared_ptr<CmdCardChangePin> cmdCardChangePin,
+                                       const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    //     cmdCardVerifyPin.setApduResponse(apduResponse);
-    //     calypsoCard.setPinAttemptRemaining(cmdCardVerifyPin.getRemainingAttemptCounter());
+    /**
+     * (private)<br>
+     * Checks the status of the response to a "Change Key" command received from the card
+     *
+     * @param cmdCardChangeKey the command.
+     * @param apduResponse the response received.
+     */
+    static void updateCalypsoChangeKey(std::shared_ptr<CmdCardChangeKey> cmdCardChangeKey,
+                                       const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    //     try {
-    //     cmdCardVerifyPin.checkStatus();
-    //     } catch (CardPinException ex) {
-    //     // forward the exception if the operation do not target the reading of the attempt
-    //     // counter.
-    //     // catch it silently otherwise
-    //     if (!cmdCardVerifyPin.isReadCounterOnly()) {
-    //         throw ex;
-    //     }
-    //     }
-    // }
+    /**
+     * (private)<br>
+     * Updates the CalypsoCardAdapter object with the response to an SV Get command received
+     * from the card <br>
+     * The SV Data values (KVC, command header, response data) are stored in
+     * CalypsoCardUtilAdapter and made available through a dedicated getters for later use<br>
+     *
+     * @param calypsoCard the CalypsoCardAdapter object to update.
+     * @param cmdCardSvGet the command.
+     * @param apduResponse the response received.
+     * @throw CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoCardSvGet(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<CmdCardSvGet> cmdCardSvGet,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    // /**
-    //  * (private)<br>
-    //  * Checks the status of the response to a "Change Pin" command received from the card
-    //  *
-    //  * @param cmdCardChangePin the command.
-    //  * @param apduResponse the response received.
-    //  */
-    // private static void updateCalypsoChangePin(
-    //     CmdCardChangePin cmdCardChangePin, ApduResponseApi apduResponse) throws CardCommandException {
-    //     cmdCardChangePin.setApduResponse(apduResponse).checkStatus();
-    // }
+    /**
+     * (private)<br>
+     * Checks the response to a SV Operation command (reload, debit or undebit) response received from
+     * the card<br>
+     * Stores the card SV signature if any (command executed outside a secure session) in the
+     * CalypsoCardAdapter.
+     *
+     * @param calypsoCard the CalypsoCardAdapter object to update.
+     * @param cmdCardSvOperation the SV Operation command (CmdCardSvReload, CmdCardSvDebit or
+     *        CmdCardSvUndebit)
+     * @param apduResponse the response received.
+     * @throw CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoCardSvOperation(
+        std::shared_ptr<CalypsoCardAdapter> calypsoCard,
+        std::shared_ptr<AbstractCardCommand> cmdCardSvOperation,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
-    // /**
-    //  * (private)<br>
-    //  * Checks the status of the response to a "Change Key" command received from the card
-    //  *
-    //  * @param cmdCardChangeKey the command.
-    //  * @param apduResponse the response received.
-    //  */
-    // private static void updateCalypsoChangeKey(
-    //     CmdCardChangeKey cmdCardChangeKey, ApduResponseApi apduResponse) throws CardCommandException {
-    //     cmdCardChangeKey.setApduResponse(apduResponse).checkStatus();
-    // }
-
-    // /**
-    //  * (private)<br>
-    //  * Updates the {@link CalypsoCardAdapter} object with the response to an SV Get command received
-    //  * from the card <br>
-    //  * The SV Data values (KVC, command header, response data) are stored in {@link
-    //  * CalypsoCardUtilAdapter} and made available through a dedicated getters for later use<br>
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardSvGet the command.
-    //  * @param apduResponse the response received.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoCardSvGet(
-    //     CalypsoCardAdapter calypsoCard, CmdCardSvGet cmdCardSvGet, ApduResponseApi apduResponse)
-    //     throws CardCommandException {
-
-    //     cmdCardSvGet.setApduResponse(apduResponse).checkStatus();
-
-    //     calypsoCard.setSvData(
-    //         cmdCardSvGet.getCurrentKVC(),
-    //         cmdCardSvGet.getSvGetCommandHeader(),
-    //         cmdCardSvGet.getApduResponse().getApdu(),
-    //         cmdCardSvGet.getBalance(),
-    //         cmdCardSvGet.getTransactionNumber(),
-    //         cmdCardSvGet.getLoadLog(),
-    //         cmdCardSvGet.getDebitLog());
-    // }
-
-    // /**
-    //  * (private)<br>
-    //  * Checks the response to a SV Operation command (reload, debit or undebit) response received from
-    //  * the card<br>
-    //  * Stores the card SV signature if any (command executed outside a secure session) in the {@link
-    //  * CalypsoCardAdapter}.
-    //  *
-    //  * @param calypsoCard the {@link CalypsoCardAdapter} object to update.
-    //  * @param cmdCardSvOperation the SV Operation command (CmdCardSvReload, CmdCardSvDebit or
-    //  *     CmdCardSvUndebit)
-    //  * @param apduResponse the response received.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoCardSvOperation(
-    //     CalypsoCardAdapter calypsoCard,
-    //     AbstractCardCommand cmdCardSvOperation,
-    //     ApduResponseApi apduResponse)
-    //     throws CardCommandException {
-
-    //     cmdCardSvOperation.setApduResponse(apduResponse).checkStatus();
-    //     calypsoCard.setSvOperationSignature(cmdCardSvOperation.getApduResponse().getDataOut());
-    // }
-
-    // /**
-    //  * (private)<br>
-    //  * Checks the response to Invalidate/Rehabilitate commands
-    //  *
-    //  * @param cmdCardInvalidateRehabilitate the Invalidate or Rehabilitate command.
-    //  * @param apduResponse the response received.
-    //  * @throws CardCommandException if a response from the card was unexpected
-    //  */
-    // private static void updateCalypsoInvalidateRehabilitate(
-    //     AbstractCardCommand cmdCardInvalidateRehabilitate, ApduResponseApi apduResponse)
-    //     throws CardCommandException {
-    //     cmdCardInvalidateRehabilitate.setApduResponse(apduResponse).checkStatus();
-    // }
+    /**
+     * (private)<br>
+     * Checks the response to Invalidate/Rehabilitate commands
+     *
+     * @param cmdCardInvalidateRehabilitate the Invalidate or Rehabilitate command.
+     * @param apduResponse the response received.
+     * @throw CardCommandException if a response from the card was unexpected
+     */
+    static void updateCalypsoInvalidateRehabilitate(
+        std::shared_ptr<AbstractCardCommand> cmdCardInvalidateRehabilitate,
+        const std::shared_ptr<ApduResponseApi> apduResponse);
 
     /**
      * (private)<br>

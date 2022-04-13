@@ -230,7 +230,7 @@ CalypsoCardSelection& CalypsoCardSelectionAdapter::prepareSelectFile(
 }
 
 const std::shared_ptr<CardSelectionRequestSpi>
-    CalypsoCardSelectionAdapter::getCardSelectionRequest() const
+    CalypsoCardSelectionAdapter::getCardSelectionRequest()
 {
     std::vector<std::shared_ptr<ApduRequestSpi>> cardSelectionApduRequests;
 

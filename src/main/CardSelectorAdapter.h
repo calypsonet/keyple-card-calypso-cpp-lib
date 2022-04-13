@@ -15,9 +15,6 @@
 #include <cstdint>
 #include <vector>
 
-/* Keyple Card Generic */
-#include "GenericCardSelection.h"
-
 /* Calypsonet Terminal Card */
 #include "CardSelectorSpi.h"
 
@@ -26,7 +23,6 @@ namespace card {
 namespace calypso {
 
 using namespace calypsonet::terminal::card::spi;
-using namespace keyple::card::generic;
 
 using FileOccurrence = CardSelectorSpi::FileOccurrence;
 using FileControlInformation = CardSelectorSpi::FileControlInformation;
@@ -41,7 +37,7 @@ class CardSelectorAdapter final : public CardSelectorSpi {
 public:
     /**
      * (package-private)<br>
-     * Created an instance of {@link CardSelectorAdapter}.
+     * Created an instance of CardSelectorAdapter.
      *
      * <p>Initialize default values.
      *

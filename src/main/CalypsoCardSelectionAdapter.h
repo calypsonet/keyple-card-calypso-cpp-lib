@@ -159,7 +159,7 @@ public:
      *
      * @since 2.0.0
      */
-    const std::shared_ptr<CardSelectionRequestSpi> getCardSelectionRequest() const override;
+    const std::shared_ptr<CardSelectionRequestSpi> getCardSelectionRequest() override;
 
     /**
      * {@inheritDoc}

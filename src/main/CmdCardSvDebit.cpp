@@ -68,10 +68,10 @@ const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardSvDebi
 };
 
 CmdCardSvDebit::CmdCardSvDebit(const std::shared_ptr<CalypsoCard> calypsoCard,
-                                 const int amount,
-                                 const uint8_t kvc,
-                                 const std::vector<uint8_t>& date,
-                                 const std::vector<uint8_t>& time)
+                               const int amount,
+                               const uint8_t kvc,
+                               const std::vector<uint8_t>& date,
+                               const std::vector<uint8_t>& time)
 : AbstractCardCommand(mCommand)
 {
     /*
