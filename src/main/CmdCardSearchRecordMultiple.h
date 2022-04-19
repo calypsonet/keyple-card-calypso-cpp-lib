@@ -50,7 +50,7 @@ public:
      * @param data The search command input/output data.
      * @since 2.1.0
      */
-    CmdCardSearchRecordMultiple(const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+    CmdCardSearchRecordMultiple(const CalypsoCardClass calypsoCardClass,
                                 const std::shared_ptr<SearchCommandDataAdapter> data);
 
     /**

@@ -76,6 +76,26 @@ using namespace keyple::core::util::cpp;
 class CardTransactionManagerAdapter : public CardTransactionManager {
 public:
     /**
+     *
+     */
+    enum class SessionState {
+        /**
+         * Initial state of a card transaction. The card must have been previously selected
+         */
+        SESSION_UNINITIALIZED,
+
+        /**
+         * The secure session is active
+         */
+        SESSION_OPEN,
+
+        /**
+         * The secure session is closed
+         */
+        SESSION_CLOSED
+    };
+
+    /**
      * Creates an instance of CardTransactionManager for secure operations.
      *
      * <p>Secure operations are enabled by the presence of CardSecuritySetting.
@@ -126,79 +146,6 @@ public:
      * @since 2.0.0
      */
     const std::string getTransactionAuditData() const override;
-
-    // /**
-    //  * Create an ApduRequestAdapter List from a AbstractCardCommand List.
-    //  *
-    //  * @param cardCommands a list of card commands.
-    //  * @return The ApduRequestAdapter list
-    //  */
-    // private List<ApduRequestSpi> getApduRequests(List<AbstractCardCommand> cardCommands) {
-    //     List<ApduRequestSpi> apduRequests = new ArrayList<ApduRequestSpi>();
-    //     if (cardCommands != null) {
-    //     for (AbstractCardCommand command : cardCommands) {
-    //         apduRequests.add(command.getApduRequest());
-    //     }
-    //     }
-    //     return apduRequests;
-    // }
-
-    // /**
-    //  * Process card commands in a Secure Session.
-    //  *
-    //  * <ul>
-    //  *   <li>On the card reader, generates a CardRequest with channelControl set to KEEP_OPEN, and
-    //  *       ApduRequests with the card commands.
-    //  *   <li>In case the secure session is active, the "cache" of SAM commands is completed with the
-    //  *       corresponding Digest Update commands.
-    //  *   <li>If a session is open and channelControl is set to CLOSE_AFTER, the current card session
-    //  *       is aborted
-    //  *   <li>Returns the corresponding card CardResponse.
-    //  * </ul>
-    //  *
-    //  * @param cardCommands the card commands inside session.
-    //  * @param channelControl indicated if the card channel of the card reader must be closed after the
-    //  *     last command.
-    //  * @throws CardTransactionException if a functional error occurs (including card and SAM IO
-    //  *     errors)
-    //  */
-    // private void processAtomicCardCommands(
-    //     List<AbstractCardCommand> cardCommands, ChannelControl channelControl) {
-
-    //     // Get the card ApduRequestAdapter List
-    //     List<ApduRequestSpi> apduRequests = getApduRequests(cardCommands);
-
-    //     // Create a CardRequest from the ApduRequestAdapter list, card AID as Selector, manage the
-    //     // logical
-    //     // channel according to the channelControl
-    //     CardRequestSpi cardRequest = new CardRequestAdapter(apduRequests, false);
-
-    //     // Transmit the commands to the card
-    //     CardResponseApi cardResponse = safeTransmit(cardRequest, channelControl);
-
-    //     // Retrieve and check the ApduResponses
-    //     List<ApduResponseApi> cardApduResponses = cardResponse.getApduResponses();
-
-    //     // Do some basic checks
-    //     checkCommandsResponsesSynchronization(apduRequests.size(), cardApduResponses.size());
-
-    //     // Add all commands data to the digest computation if this method is invoked within a Secure
-    //     // Session.
-    //     if (sessionState == SessionState.SESSION_OPEN) {
-    //     samCommandProcessor.pushCardExchangedData(apduRequests, cardApduResponses, 0);
-    //     }
-
-    //     try {
-    //     CalypsoCardUtilAdapter.updateCalypsoCard(
-    //         calypsoCard,
-    //         cardCommands,
-    //         cardResponse.getApduResponses(),
-    //         sessionState == SessionState.SESSION_OPEN);
-    //     } catch (CardCommandException e) {
-    //     throw new CardAnomalyException(
-    //         CARD_COMMAND_ERROR + "processing responses to card commands: " + e.getCommand(), e);
-    //     }
-    // }
 
     /**
      * {@inheritDoc}
@@ -253,24 +200,6 @@ public:
                                              const uint8_t issuerKvc) override;
 
     /**
-     * Checks the provided command from the session buffer overflow management perspective<br>
-     * A exception is raised if the session buffer is overflowed in ATOMIC modification mode.<br>
-     * Returns false if the command does not affect the session buffer.<br>
-     * Sets the overflow flag and the neededSessionBufferSpace value according to the characteristics
-     * of the command in other cases.
-     *
-     * @param command the command.
-     * @param overflow flag set to true if the command overflowed the buffer.
-     * @param neededSessionBufferSpace updated with the size of the buffer consumed by the command.
-     * @return True if the command modifies the content of the card, false if not
-     * @throws AtomicTransactionException if the command overflows the buffer in ATOMIC modification
-     *     mode
-     */
-    bool checkModifyingCommand(const std::shared_ptr<AbstractCardCommand> command,
-                               std::atomic<bool>& overflow,
-                               std::atomic<int>& neededSessionBufferSpace);
-
-    /**
      * {@inheritDoc}
      *
      * @since 2.0.0
@@ -290,7 +219,7 @@ public:
      *
      * @since 2.1.0
      */
-    CardTransactionManager& prepareSelectFile(const short lid) override;
+    CardTransactionManager& prepareSelectFile(const uint16_t lid) override;
 
     /**
      * {@inheritDoc}
@@ -454,21 +383,18 @@ public:
      *
      * @since 2.1.0
      */
-    CardTransactionManager& prepareIncreaseCounters(
+    CardTransactionManager& prepareDecreaseCounters(
         const uint8_t sfi,
-        const std::map<const int, const int>& counterNumberToIncValueMap) final
-    {
-        return prepareIncreaseOrDecreaseCounters(false, sfi, counterNumberToIncValueMap);
-    }
+        const std::map<const int, const int>& counterNumberToDecValueMap) final;
 
     /**
      * {@inheritDoc}
      *
      * @since 2.1.0
      */
-    CardTransactionManager& prepareDecreaseCounters(
+    CardTransactionManager& prepareIncreaseCounters(
         const uint8_t sfi,
-        const std::map<const int, const int>& counterNumberToDecValueMap) final;
+        const std::map<const int, const int>& counterNumberToIncValueMap) final;
 
     /**
      * {@inheritDoc}
@@ -551,36 +477,21 @@ public:
     /**
      *
      */
-    friend std::ostream& operator<<(std::ostrem& os, const SessionState ss);
+    friend std::ostream& operator<<(std::ostream& os, const SessionState ss);
 
 
 private:
     /**
-     *
-     */
-    enum class SessionState {
-        /**
-         * Initial state of a card transaction. The card must have been previously selected
-         */
-        SESSION_UNINITIALIZED,
-
-        /**
-         * The secure session is active
-         */
-        SESSION_OPEN,
-
-        /**
-         * The secure session is closed
-         */
-        SESSION_CLOSED
-    };
-
-    /**
      * (private)<br>
-     * Adapter of {@link ApduResponseApi} used to create anticipated card responses.
+     * Adapter of ApduResponseApi used to create anticipated card responses.
      */
     class ApduResponseAdapter : public ApduResponseApi {
     public:
+        /**
+         *
+         */
+        friend class CardTransactionManagerAdapter;
+
         /**
          * Constructor
          */
@@ -600,17 +511,6 @@ private:
          * {@inheritDoc}
          */
         int getStatusWord() const override;
-
-        /**
-         *
-         */
-        friend std::ostream& operator<<(std::ostream& os, const ApduResponseAdapter& ara);
-
-        /**
-         *
-         */
-        friend std::ostream& operator<<(std::ostream& os,
-                                        const std::shared_ptr<ApduResponseAdapter> ara);
 
     private:
         /**
@@ -714,6 +614,38 @@ private:
      */
     static const std::shared_ptr<ApduResponseApi> RESPONSE_OK;
     static const std::shared_ptr<ApduResponseApi> RESPONSE_OK_POSTPONED;
+
+    /**
+     * Create an ApduRequestAdapter List from a AbstractCardCommand List.
+     *
+     * @param cardCommands a list of card commands.
+     * @return The ApduRequestAdapter list
+     */
+    const std::vector<std::shared_ptr<ApduRequestSpi>> getApduRequests(
+        const std::vector<std::shared_ptr<AbstractCardCommand>>& cardCommands);
+
+    /**
+     * Process card commands in a Secure Session.
+     *
+     * <ul>
+     *   <li>On the card reader, generates a CardRequest with channelControl set to KEEP_OPEN, and
+     *       ApduRequests with the card commands.
+     *   <li>In case the secure session is active, the "cache" of SAM commands is completed with the
+     *       corresponding Digest Update commands.
+     *   <li>If a session is open and channelControl is set to CLOSE_AFTER, the current card session
+     *       is aborted
+     *   <li>Returns the corresponding card CardResponse.
+     * </ul>
+     *
+     * @param cardCommands the card commands inside session.
+     * @param channelControl indicated if the card channel of the card reader must be closed after
+     *        the last command.
+     * @throw CardTransactionException if a functional error occurs (including card and SAM IO
+     *        errors)
+     */
+    void processAtomicCardCommands(
+        const std::vector<std::shared_ptr<AbstractCardCommand>> cardCommands,
+        const ChannelControl channelControl);
 
     /**
      * Close the Secure Session.
@@ -1035,7 +967,7 @@ private:
      */
     void processAtomicOpening(
         const WriteAccessLevel writeAccessLevel,
-        const std::vector<std::shared_ptr<AbstractCardCommand>>& cardCommands);
+        std::vector<std::shared_ptr<AbstractCardCommand>>& cardCommands);
 
     /**
      * Prepares an SV Undebit (partially or totally cancels the last SV debit command).
@@ -1065,6 +997,17 @@ private:
     void prepareInternalSvDebit(const int amount,
                                 const std::vector<uint8_t>& date,
                                 const std::vector<uint8_t>& time);
+
+    /**
+     *
+     */
+    friend std::ostream& operator<<(std::ostream& os, const ApduResponseAdapter& ara);
+
+    /**
+     *
+     */
+    friend std::ostream& operator<<(std::ostream& os,
+                                    const std::shared_ptr<ApduResponseAdapter> ara);
 };
 
 }

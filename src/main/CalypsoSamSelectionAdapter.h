@@ -66,7 +66,7 @@ public:
      * @since 2.0.0
      */
     const std::shared_ptr<SmartCardSpi> parse(
-        const std::shared_ptr<CardSelectionResponseApi> cardSelectionResponse) const override;
+        const std::shared_ptr<CardSelectionResponseApi> cardSelectionResponse) override;
 
     /**
      * {@inheritDoc}

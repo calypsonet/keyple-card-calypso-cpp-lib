@@ -54,7 +54,7 @@ public:
      * @throw IllegalArgumentException If the request is inconsistent
      * @since 2.0.1
      */
-    CmdCardUpdateRecord(const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+    CmdCardUpdateRecord(const CalypsoCardClass calypsoCardClass,
                         const uint8_t sfi,
                         const int recordNumber,
                         const std::vector<uint8_t>& newRecordData);

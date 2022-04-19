@@ -14,7 +14,7 @@
 
 namespace keyple {
 namespace card {
-namespace generic {
+namespace calypso {
 
 CardRequestAdapter::CardRequestAdapter(
   const std::vector<std::shared_ptr<ApduRequestSpi>> apduRequests,

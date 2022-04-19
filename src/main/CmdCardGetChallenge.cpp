@@ -36,7 +36,7 @@ using namespace keyple::core::util::cpp;
 
 const CalypsoCardCommand CmdCardGetChallenge::mCommand = CalypsoCardCommand::GET_CHALLENGE;
 
-CmdCardGetChallenge::CmdCardGetChallenge(const std::shared_ptr<CalypsoCardClass> calypsoCardClass)
+CmdCardGetChallenge::CmdCardGetChallenge(const CalypsoCardClass calypsoCardClass)
 : AbstractCardCommand(mCommand)
 {
     const uint8_t p1 = 0x00;
@@ -45,7 +45,7 @@ CmdCardGetChallenge::CmdCardGetChallenge(const std::shared_ptr<CalypsoCardClass>
 
     setApduRequest(
         std::make_shared<ApduRequestAdapter>(
-            ApduUtil::build(calypsoCardClass->getValue(),
+            ApduUtil::build(calypsoCardClass.getValue(),
                             mCommand.getInstructionByte(),
                             p1,
                             p2,

@@ -44,7 +44,6 @@ namespace card {
 namespace calypso {
 
 using namespace calypsonet::terminal::card::spi;
-using namespace keyple::card::generic;
 using namespace keyple::core::util;
 using namespace keyple::core::util::cpp;
 using namespace keyple::core::util::cpp::exception;
@@ -248,7 +247,7 @@ const std::shared_ptr<CardSelectionRequestSpi>
 }
 
 const std::shared_ptr<SmartCardSpi> CalypsoCardSelectionAdapter::parse(
-    const std::shared_ptr<CardSelectionResponseApi> cardSelectionResponse) const
+    const std::shared_ptr<CardSelectionResponseApi> cardSelectionResponse)
 {
     const std::shared_ptr<CardResponseApi> cardResponse = cardSelectionResponse->getCardResponse();
     std::vector<std::shared_ptr<ApduResponseApi>> apduResponses;

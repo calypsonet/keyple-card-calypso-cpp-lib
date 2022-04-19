@@ -78,10 +78,10 @@ const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardVerify
 };
 
 CmdCardVerifyPin::CmdCardVerifyPin(
-  const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+  const CalypsoCardClass calypsoCardClass,
   const bool encryptPinTransmission,
   const std::vector<uint8_t>& pin)
-: AbstractCardCommand(mCommand), mCla(calypsoCardClass->getValue())
+: AbstractCardCommand(mCommand), mCla(calypsoCardClass.getValue())
 {
     if (pin.empty() ||
         (!encryptPinTransmission && pin.size() != 4) ||
@@ -102,8 +102,8 @@ CmdCardVerifyPin::CmdCardVerifyPin(
     mReadCounterOnly = false;
 }
 
-CmdCardVerifyPin::CmdCardVerifyPin(const std::shared_ptr<CalypsoCardClass> calypsoCardClass)
-: AbstractCardCommand(mCommand), mCla(calypsoCardClass->getValue())
+CmdCardVerifyPin::CmdCardVerifyPin(const CalypsoCardClass calypsoCardClass)
+: AbstractCardCommand(mCommand), mCla(calypsoCardClass.getValue())
 {
     const uint8_t p1 = 0x00;
     const uint8_t p2 = 0x00;

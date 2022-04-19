@@ -85,7 +85,7 @@ const std::map<const int, const std::shared_ptr<StatusProperties>>
 };
 
 CmdCardSearchRecordMultiple::CmdCardSearchRecordMultiple(
-  const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+  const CalypsoCardClass calypsoCardClass,
   const std::shared_ptr<SearchCommandDataAdapter> data)
 : AbstractCardCommand(CalypsoCardCommand::SEARCH_RECORD_MULTIPLE),
   mData(data)
@@ -130,7 +130,7 @@ CmdCardSearchRecordMultiple::CmdCardSearchRecordMultiple(
 
     setApduRequest(
         std::make_shared<ApduRequestAdapter>(
-            ApduUtil::build(calypsoCardClass->getValue(),
+            ApduUtil::build(calypsoCardClass.getValue(),
                             getCommandRef().getInstructionByte(),
                             data->getRecordNumber(),
                             p2,

@@ -55,7 +55,6 @@ using namespace calypsonet::terminal::calypso::transaction;
 using namespace calypsonet::terminal::card;
 using namespace calypsonet::terminal::card::spi;
 using namespace keyple::card::calypso;
-using namespace keyple::card::generic;
 using namespace keyple::core::util;
 using namespace keyple::core::util::cpp;
 using namespace keyple::core::util::cpp::exception;

@@ -55,7 +55,7 @@ public:
      * @param length The number of bytes to read.
      * @since 2.1.0
      */
-    CmdCardReadBinary(const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+    CmdCardReadBinary(const CalypsoCardClass calypsoCardClass,
                       const uint8_t sfi,
                       const int offset,
                       const uint8_t length);

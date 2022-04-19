@@ -82,7 +82,7 @@ const std::map<const int, const std::shared_ptr<StatusProperties>>
 
 CmdCardIncreaseOrDecrease::CmdCardIncreaseOrDecrease(
   const bool isDecreaseCommand,
-  const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+  const CalypsoCardClass calypsoCardClass,
   const uint8_t sfi,
   const int counterNumber,
   const int incDecValue)
@@ -91,7 +91,7 @@ CmdCardIncreaseOrDecrease::CmdCardIncreaseOrDecrease(
   mCounterNumber(counterNumber),
   mIncDecValue(incDecValue)
 {
-    const uint8_t cla = calypsoCardClass->getValue();
+    const uint8_t cla = calypsoCardClass.getValue();
 
     /*
      * Convert the integer value into a 3-byte buffer

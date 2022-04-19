@@ -26,6 +26,7 @@
 /* Keyple Card Calypso */
 #include "CalypsoSamAdapter.h"
 #include "CalypsoSamCommandException.h"
+#include "CardRequestAdapter.h"
 #include "CardSelectionRequestAdapter.h"
 #include "CmdSamUnlock.h"
 
@@ -59,10 +60,9 @@ const std::shared_ptr<CardSelectionRequestSpi> CalypsoSamSelectionAdapter::getCa
     if (!cardSelectionApduRequests.empty()) {
         return std::make_shared<CardSelectionRequestAdapter>(
                    mSamCardSelector,
-                   std::make_shared<CardRequestAdapter>(cardSelectionApduRequests,
-                   false));
+                   std::make_shared<CardRequestAdapter>(cardSelectionApduRequests, false));
     } else {
-        return std::make_shared<CardSelectionRequestAdapter>(samCardSelector, nullptr);
+        return std::make_shared<CardSelectionRequestAdapter>(mSamCardSelector, nullptr);
     }
 }
 
@@ -117,7 +117,7 @@ CalypsoSamSelection& CalypsoSamSelectionAdapter::filterBySerialNumber(
 
 CalypsoSamSelection& CalypsoSamSelectionAdapter::setUnlockData(const std::string& unlockData)
 {
-    Assert::getInstance().isTrue(unlockData.size() == 16 || unlockData.size()() == 32, "length");
+    Assert::getInstance().isTrue(unlockData.size() == 16 || unlockData.size() == 32, "length");
 
     if (!ByteArrayUtil::isValidHexString(unlockData)) {
         throw IllegalArgumentException("Invalid hexadecimal string.");
@@ -133,7 +133,7 @@ const std::string CalypsoSamSelectionAdapter::buildAtrRegex(
     const std::string& samSerialNumberRegex)
 {
     std::string atrRegex;
-    std::tring snRegex;
+    std::string snRegex;
 
     /* Check if serialNumber is defined */
     if (samSerialNumberRegex.empty()) {
@@ -152,16 +152,16 @@ const std::string CalypsoSamSelectionAdapter::buildAtrRegex(
     std::string applicationTypeMask;
     if (productType != CalypsoSam::ProductType::UNKNOWN) {
         switch (productType) {
-        case SAM_C1:
+        case CalypsoSam::ProductType::SAM_C1:
             applicationTypeMask = "C1";
             break;
-        case SAM_S1DX:
+        case CalypsoSam::ProductType::SAM_S1DX:
             applicationTypeMask = "D?";
             break;
-        case SAM_S1E1:
+        case CalypsoSam::ProductType::SAM_S1E1:
             applicationTypeMask = "E1";
             break;
-        case CSAM_F:
+        case CalypsoSam::ProductType::CSAM_F:
             /* TODO Check what is the expected mask here */
             applicationTypeMask = "??";
             break;

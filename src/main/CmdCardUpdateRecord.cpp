@@ -72,7 +72,7 @@ const std::map<const int, const std::shared_ptr<StatusProperties>>
     }
 };
 
-CmdCardUpdateRecord::CmdCardUpdateRecord(const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+CmdCardUpdateRecord::CmdCardUpdateRecord(const CalypsoCardClass calypsoCardClass,
                                          const uint8_t sfi,
                                          const int recordNumber,
                                          const std::vector<uint8_t>& newRecordData)
@@ -81,7 +81,7 @@ CmdCardUpdateRecord::CmdCardUpdateRecord(const std::shared_ptr<CalypsoCardClass>
   mRecordNumber(recordNumber),
   mData(newRecordData)
 {
-    const uint8_t cla = calypsoCardClass->getValue();
+    const uint8_t cla = calypsoCardClass.getValue();
     const uint8_t p2 = (sfi == 0) ? 0x04 : sfi * 8 + 4;
 
     setApduRequest(

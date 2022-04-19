@@ -29,7 +29,7 @@ std::shared_ptr<SmartCard> CalypsoSamResourceProfileExtensionAdapter::matches(
         return nullptr;
     }
 
-    samCardSelectionManager->prepareSelection(calypsoSamSelection);
+    samCardSelectionManager->prepareSelection(mCalypsoSamSelection);
     std::shared_ptr<CardSelectionResult> samCardSelectionResult = nullptr;
 
     try {

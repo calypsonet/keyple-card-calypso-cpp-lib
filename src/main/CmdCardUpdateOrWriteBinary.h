@@ -50,7 +50,7 @@ public:
      * Constructor.
      *
      * @param isUpdateCommand True if it is an "Update Binary" command, false if it is a "Write
-     *     Binary" command.
+     *        Binary" command.
      * @param calypsoCardClass indicates which CLA byte should be used for the Apdu.
      * @param sfi the sfi to select.
      * @param offset the offset.
@@ -58,7 +58,7 @@ public:
      * @since 2.1.0
      */
     CmdCardUpdateOrWriteBinary(const bool isUpdateCommand,
-                               const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+                               const CalypsoCardClass calypsoCardClass,
                                const uint8_t sfi,
                                const int offset,
                                const std::vector<uint8_t>& data);

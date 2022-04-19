@@ -69,7 +69,7 @@ const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardReadBi
     },
 };
 
-CmdCardReadBinary::CmdCardReadBinary(const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+CmdCardReadBinary::CmdCardReadBinary(const CalypsoCardClass calypsoCardClass,
                                      const uint8_t sfi,
                                      const int offset,
                                      const uint8_t length)
@@ -87,7 +87,7 @@ CmdCardReadBinary::CmdCardReadBinary(const std::shared_ptr<CalypsoCardClass> cal
     setApduRequest(
         std::make_shared<ApduRequestAdapter>(
             ApduUtil::build(
-                calypsoCardClass->getValue(),
+                calypsoCardClass.getValue(),
                 getCommandRef().getInstructionByte(),
                 p1,
                 lsb,

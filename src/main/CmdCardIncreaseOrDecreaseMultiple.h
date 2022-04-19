@@ -56,7 +56,7 @@ public:
      */
     CmdCardIncreaseOrDecreaseMultiple(
         const bool isDecreaseCommand,
-        const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+        const CalypsoCardClass calypsoCardClass,
         const uint8_t sfi,
         const std::map<const int, const int> counterNumberToIncDecValueMap);
 
@@ -104,8 +104,8 @@ public:
     /**
      * (package-private)<br>
      *
-     * @return A not empty sorted map of counter values as 3-byte array by counter number, or an empty
-     *         map if no data is available.
+     * @return A not empty sorted map of counter values as 3-byte array by counter number, or an
+     *         empty map if no data is available.
      * @since 2.1.0
      */
     const std::map<const int, const std::vector<uint8_t>>& getNewCounterValues() const;

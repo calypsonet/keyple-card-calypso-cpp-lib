@@ -57,9 +57,7 @@ public:
      * @return True
      * @since 2.0.1
      */
-    bool isSessionBufferUsed() const override {
-        return true;
-    }
+    bool isSessionBufferUsed() const override;
 
     /**
      * {@inheritDoc}

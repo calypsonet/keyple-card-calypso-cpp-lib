@@ -81,7 +81,7 @@ const std::map<const int, const std::shared_ptr<StatusProperties>>
 
 CmdCardUpdateOrWriteBinary::CmdCardUpdateOrWriteBinary(
   const bool isUpdateCommand,
-  const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+  const CalypsoCardClass calypsoCardClass,
   const uint8_t sfi,
   const int offset,
   const std::vector<uint8_t>& data)
@@ -102,7 +102,7 @@ CmdCardUpdateOrWriteBinary::CmdCardUpdateOrWriteBinary(
 
     setApduRequest(
         std::make_shared<ApduRequestAdapter>(
-            ApduUtil::build(calypsoCardClass->getValue(),
+            ApduUtil::build(calypsoCardClass.getValue(),
                             getCommandRef().getInstructionByte(),
                             p1,
                             lsb,

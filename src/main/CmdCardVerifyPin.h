@@ -56,7 +56,7 @@ public:
      * @since 2.0.1
      */
     CmdCardVerifyPin(
-        const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+        const CalypsoCardClass calypsoCardClass,
         const bool encryptPinTransmission,
         const std::vector<uint8_t>& pin);
 
@@ -67,7 +67,7 @@ public:
      * @param calypsoCardClass indicates which CLA byte should be used for the Apdu.
      * @since 2.0.1
      */
-    CmdCardVerifyPin(const std::shared_ptr<CalypsoCardClass> calypsoCardClass);
+    CmdCardVerifyPin(const CalypsoCardClass calypsoCardClass);
 
     /**
      * {@inheritDoc}

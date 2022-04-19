@@ -74,7 +74,7 @@ private:
     /**
      *
      */
-    static const CalypsoCardCommand mCommand;;
+    static const CalypsoCardCommand mCommand;
 
     /**
      *

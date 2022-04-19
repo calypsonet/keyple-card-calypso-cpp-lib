@@ -33,7 +33,6 @@ namespace calypso {
  */
 class CmdCardRatificationBuilder final {
 public:
-
     /**
      * (package-private)<br>
      *

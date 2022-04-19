@@ -52,7 +52,7 @@ public:
      * @param calypsoCardClass indicates which CLA byte should be used for the Apdu.
      * @since 2.0.1
      */
-    CmdCardGetChallenge(const std::shared_ptr<CalypsoCardClass> calypsoCardClass);
+    CmdCardGetChallenge(const CalypsoCardClass calypsoCardClass);
 
     /**
      * {@inheritDoc}

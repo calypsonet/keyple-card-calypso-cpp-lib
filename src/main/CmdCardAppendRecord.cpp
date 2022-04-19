@@ -72,14 +72,14 @@ const std::map<const int, const std::shared_ptr<StatusProperties>>
     }
 };
 
-CmdCardAppendRecord::CmdCardAppendRecord(const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+CmdCardAppendRecord::CmdCardAppendRecord(const CalypsoCardClass calypsoCardClass,
                                          const uint8_t sfi,
                                          const std::vector<uint8_t>& newRecordData)
 : AbstractCardCommand(mCommand), mSfi(sfi), mData(newRecordData)
 
 {
 
-    const uint8_t cla = calypsoCardClass->getValue();
+    const uint8_t cla = calypsoCardClass.getValue();
     const uint8_t p1 = 0x00;
     const uint8_t p2 = (sfi == 0) ? 0x00 : sfi * 8;
 

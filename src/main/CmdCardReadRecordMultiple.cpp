@@ -84,7 +84,7 @@ const std::map<const int, const std::shared_ptr<StatusProperties>>
 };
 
 CmdCardReadRecordMultiple::CmdCardReadRecordMultiple(
-    const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+    const CalypsoCardClass calypsoCardClass,
     const uint8_t sfi,
     const uint8_t recordNumber,
     const uint8_t offset,
@@ -100,7 +100,7 @@ CmdCardReadRecordMultiple::CmdCardReadRecordMultiple(
 
     setApduRequest(
         std::make_shared<ApduRequestAdapter>(
-            ApduUtil::build(calypsoCardClass->getValue(),
+            ApduUtil::build(calypsoCardClass.getValue(),
                             getCommandRef().getInstructionByte(),
                             recordNumber,
                             p2,

@@ -20,7 +20,7 @@
 
 namespace keyple {
 namespace card {
-namespace generic {
+namespace calypso {
 
 using namespace calypsonet::terminal::card::spi;
 

@@ -51,7 +51,7 @@ public:
      * @throw IllegalArgumentException If the command is inconsistent
      * @since 2.0.1
      */
-    CmdCardAppendRecord(const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+    CmdCardAppendRecord(const CalypsoCardClass calypsoCardClass,
                         const uint8_t sfi,
                         const std::vector<uint8_t>& newRecordData);
 

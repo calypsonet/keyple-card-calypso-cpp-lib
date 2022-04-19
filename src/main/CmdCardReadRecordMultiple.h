@@ -52,7 +52,7 @@ public:
      * @param length The number of bytes to read in each record.
      * @since 2.1.0
      */
-    CmdCardReadRecordMultiple(const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+    CmdCardReadRecordMultiple(const CalypsoCardClass calypsoCardClass,
                               const uint8_t sfi,
                               const uint8_t recordNumber,
                               const uint8_t offset,

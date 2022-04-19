@@ -57,7 +57,7 @@ public:
      * @throw IllegalArgumentException If the command is inconsistent
      */
     CmdCardIncreaseOrDecrease(const bool isDecreaseCommand,
-                              const std::shared_ptr<CalypsoCardClass> calypsoCardClass,
+                              const CalypsoCardClass calypsoCardClass,
                               const uint8_t sfi,
                               const int counterValue,
                               const int incDecValue);
