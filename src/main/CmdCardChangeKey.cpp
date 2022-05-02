@@ -31,44 +31,8 @@ namespace calypso {
 using namespace keyple::core::util;
 
 const CalypsoCardCommand CmdCardChangeKey::mCommand = CalypsoCardCommand::CHANGE_KEY;
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardChangeKey::STATUS_TABLE = {
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Lc value not supported (not 04h, 10h, 18h, 20h).",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6900,
-        std::make_shared<StatusProperties>("Transaction Counter is 0.",
-                                           typeid(CardTerminatedException))
-    }, {
-        0x6982,
-        std::make_shared<StatusProperties>("Security conditions not fulfilled (Get Challenge not " \
-                                           "done: challenge unavailable).",
-                                           typeid(CardSecurityContextException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Access forbidden (a session is open or DF is " \
-                                           "invalidated).",
-                                           typeid(CardAccessForbiddenException))
-    }, {
-        0x6988,
-        std::make_shared<StatusProperties>("Incorrect Cryptogram.",
-                                           typeid(CardSecurityDataException))
-    }, {
-        0x6A80,
-        std::make_shared<StatusProperties>("Decrypted message incorrect (key algorithm not " \
-                                           "supported, incorrect padding, etc.).",
-                                           typeid(CardSecurityDataException))
-    }, {
-        0x6A87,
-        std::make_shared<StatusProperties>("Lc not compatible with P2.",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6B00,
-        std::make_shared<StatusProperties>("Incorrect P1, P2.",
-                                           typeid(CardIllegalParameterException))
-    },
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardChangeKey::STATUS_TABLE = initStatusTable();
 
 CmdCardChangeKey::CmdCardChangeKey(const CalypsoCardClass calypsoCardClass,
                                    const uint8_t keyIndex,
@@ -86,6 +50,43 @@ CmdCardChangeKey::CmdCardChangeKey(const CalypsoCardClass calypsoCardClass,
 bool CmdCardChangeKey::isSessionBufferUsed() const
 {
     return false;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardChangeKey::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Lc value not supported (not 04h, 10h, 18h, 20h).",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6900,
+              std::make_shared<StatusProperties>("Transaction Counter is 0.",
+                                                 typeid(CardTerminatedException))});
+    m.insert({0x6982,
+              std::make_shared<StatusProperties>("Security conditions not fulfilled (Get " \
+                                                 "Challenge not done: challenge unavailable).",
+                                                 typeid(CardSecurityContextException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Access forbidden (a session is open or DF is " \
+                                                 "invalidated).",
+                                                 typeid(CardAccessForbiddenException))});
+    m.insert({0x6988,
+              std::make_shared<StatusProperties>("Incorrect Cryptogram.",
+                                                 typeid(CardSecurityDataException))});
+    m.insert({0x6A80,
+              std::make_shared<StatusProperties>("Decrypted message incorrect (key algorithm not " \
+                                                 "supported, incorrect padding, etc.).",
+                                                 typeid(CardSecurityDataException))});
+    m.insert({0x6A87,
+              std::make_shared<StatusProperties>("Lc not compatible with P2.",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6B00,
+              std::make_shared<StatusProperties>("Incorrect P1, P2.",
+                                                 typeid(CardIllegalParameterException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

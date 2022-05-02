@@ -34,40 +34,8 @@ namespace calypso {
 using namespace keyple::core::util;
 using namespace keyple::core::util::cpp;
 
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardReadBinary::STATUS_TABLE =
-{
-    {
-        0x6981,
-        std::make_shared<StatusProperties>("Incorrect EF type: not a Binary EF.",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6982,
-        std::make_shared<StatusProperties>("Security conditions not fulfilled (PIN code not " \
-                                           "presented, encryption required).",
-                                           typeid(CardSecurityContextException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Access forbidden (Never access mode).",
-                                           typeid(CardAccessForbiddenException))
-    }, {
-        0x6986,
-        std::make_shared<StatusProperties>("Incorrect file type: the Current File is not an EF. " \
-                                           "Supersedes 6981h.",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6A82,
-        std::make_shared<StatusProperties>("File not found",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6A83,
-        std::make_shared<StatusProperties>("Offset not in the file (offset overflow).",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6B00,
-        std::make_shared<StatusProperties>("P1 value not supported.",
-                                           typeid(CardIllegalParameterException))
-    },
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardReadBinary::STATUS_TABLE = initStatusTable();
 
 CmdCardReadBinary::CmdCardReadBinary(const CalypsoCardClass calypsoCardClass,
                                      const uint8_t sfi,
@@ -114,6 +82,39 @@ uint8_t CmdCardReadBinary::getSfi() const
 int CmdCardReadBinary::getOffset() const
 {
     return mOffset;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardReadBinary::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6981,
+              std::make_shared<StatusProperties>("Incorrect EF type: not a Binary EF.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6982,
+              std::make_shared<StatusProperties>("Security conditions not fulfilled (PIN code " \
+                                                 "not presented, encryption required).",
+                                                 typeid(CardSecurityContextException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Access forbidden (Never access mode).",
+                                                 typeid(CardAccessForbiddenException))});
+    m.insert({0x6986,
+              std::make_shared<StatusProperties>("Incorrect file type: the Current File is not " \
+                                                 "an EF. Supersedes 6981h.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6A82,
+              std::make_shared<StatusProperties>("File not found",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6A83,
+              std::make_shared<StatusProperties>("Offset not in the file (offset overflow).",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6B00,
+              std::make_shared<StatusProperties>("P1 value not supported.",
+                                                 typeid(CardIllegalParameterException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

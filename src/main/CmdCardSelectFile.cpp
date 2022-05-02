@@ -33,20 +33,8 @@ using namespace keyple::core::util::cpp::exception;
 
 const int CmdCardSelectFile::TAG_PROPRIETARY_INFORMATION = 0x85;
 const CalypsoCardCommand CmdCardSelectFile::mCommand = CalypsoCardCommand::SELECT_FILE;
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardSelectFile::STATUS_TABLE =
-{
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Lc value not supported.",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6A82,
-        std::make_shared<StatusProperties>("File not found.", typeid(CardDataAccessException))
-    }, {
-        0x6119,
-        std::make_shared<StatusProperties>("Correct execution (ISO7816 T=0).", typeid(nullptr))
-    }
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardSelectFile::STATUS_TABLE = initStatusTable();
 
 CmdCardSelectFile::CmdCardSelectFile(const CalypsoCardClass calypsoCardClass,
                                      const SelectFileControl selectFileControl)
@@ -141,6 +129,25 @@ const std::vector<uint8_t>& CmdCardSelectFile::getProprietaryInformation()
     }
 
     return mProprietaryInformation;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardSelectFile::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Lc value not supported.",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6A82,
+              std::make_shared<StatusProperties>("File not found.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6119,
+              std::make_shared<StatusProperties>("Correct execution (ISO7816 T=0).",
+                                                 typeid(nullptr))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

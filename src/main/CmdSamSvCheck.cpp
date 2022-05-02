@@ -36,21 +36,8 @@ using namespace keyple::core::util::cpp::exception;
 
 const CalypsoSamCommand CmdSamSvCheck::mCommand = CalypsoSamCommand::SV_CHECK;
 
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdSamSvCheck::STATUS_TABLE = {
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Incorrect Lc.",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("No active SV transaction.",
-                                           typeid(CalypsoSamAccessForbiddenException))
-    }, {
-        0x6988,
-        std::make_shared<StatusProperties>("Incorrect SV signature.",
-                                           typeid(CalypsoSamSecurityDataException))
-    }
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamSvCheck::STATUS_TABLE = initStatusTable();
 
 CmdSamSvCheck::CmdSamSvCheck(const CalypsoSam::ProductType productType,
                              const std::vector<uint8_t>& svCardSignature)
@@ -76,6 +63,24 @@ CmdSamSvCheck::CmdSamSvCheck(const CalypsoSam::ProductType productType,
             std::make_shared<ApduRequestAdapter>(
                 ApduUtil::build(cla, mCommand.getInstructionByte(), p1, p2, 0x00)));
     }
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>> CmdSamSvCheck::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractSamCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Incorrect Lc.",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("No active SV transaction.",
+                                                 typeid(CalypsoSamAccessForbiddenException))});
+    m.insert({0x6988,
+              std::make_shared<StatusProperties>("Incorrect SV signature.",
+                                                 typeid(CalypsoSamSecurityDataException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>& CmdSamSvCheck::getStatusTable()

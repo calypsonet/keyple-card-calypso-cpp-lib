@@ -44,7 +44,7 @@ public:
      * @param isStatusCodesVerificationEnabled true or false.
      * @since 2.0.0
      */
-    CardRequestAdapter(const std::vector<std::shared_ptr<ApduRequestSpi>> apduRequests,
+    CardRequestAdapter(const std::vector<std::shared_ptr<ApduRequestSpi>>& apduRequests,
                        const bool isStatusCodesVerificationEnabled);
 
     /**

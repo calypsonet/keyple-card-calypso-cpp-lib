@@ -433,7 +433,7 @@ CardTransactionManager& CardTransactionManagerAdapter::prepareIncreaseOrDecrease
     return *this;
 }
 
-const std::vector<std::shared_ptr<ApduRequestSpi>> getApduRequests(
+const std::vector<std::shared_ptr<ApduRequestSpi>> CardTransactionManagerAdapter::getApduRequests(
     const std::vector<std::shared_ptr<AbstractCardCommand>>& cardCommands)
 {
     std::vector<std::shared_ptr<ApduRequestSpi>> apduRequests;

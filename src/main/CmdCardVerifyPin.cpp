@@ -37,45 +37,8 @@ using namespace keyple::core::util::cpp;
 using namespace keyple::core::util::cpp::exception;
 
 const CalypsoCardCommand CmdCardVerifyPin::mCommand = CalypsoCardCommand::VERIFY_PIN;
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardVerifyPin::STATUS_TABLE =
-{
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Lc value not supported (only 00h, 04h or 08h are " \
-                                           "supported).",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6900,
-        std::make_shared<StatusProperties>("Transaction Counter is 0.",
-                                           typeid(CardTerminatedException))
-    }, {
-        0x6982,
-        std::make_shared<StatusProperties>("Security conditions not fulfilled (Get Challenge not " \
-                                           "done: challenge unavailable).",
-                                           typeid(CardSecurityContextException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Access forbidden (a session is open or DF is " \
-                                           "invalidated).",
-                                           typeid(CardAccessForbiddenException))
-    }, {
-        0x63C1,
-        std::make_shared<StatusProperties>("Incorrect PIN (1 attempt remaining).",
-                                           typeid(CardPinException))
-    }, {
-        0x63C2,
-        std::make_shared<StatusProperties>("Incorrect PIN (2 attempt remaining).",
-                                           typeid(CardPinException))
-    }, {
-        0x6983,
-        std::make_shared<StatusProperties>("Presentation rejected (PIN is blocked).",
-                                           typeid(CardPinException))
-    }, {
-        0x6D00,
-        std::make_shared<StatusProperties>("PIN function not present.",
-                                           typeid(CardIllegalParameterException))
-    }
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardVerifyPin::STATUS_TABLE = initStatusTable();
 
 CmdCardVerifyPin::CmdCardVerifyPin(
   const CalypsoCardClass calypsoCardClass,
@@ -153,7 +116,45 @@ int CmdCardVerifyPin::getRemainingAttemptCounter() const
     return attemptCounter;
 }
 
-const std::map<const int, const std::shared_ptr<StatusProperties>>& CmdCardVerifyPin::getStatusTable() const
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardVerifyPin::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Lc value not supported (only 00h, 04h or 08h " \
+                                                 "are supported).",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6900,
+              std::make_shared<StatusProperties>("Transaction Counter is 0.",
+                                                 typeid(CardTerminatedException))});
+    m.insert({0x6982,
+              std::make_shared<StatusProperties>("Security conditions not fulfilled (Get " \
+                                                 "Challenge not done: challenge unavailable).",
+                                                 typeid(CardSecurityContextException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Access forbidden (a session is open or DF is " \
+                                                 "invalidated).",
+                                                 typeid(CardAccessForbiddenException))});
+    m.insert({0x63C1,
+              std::make_shared<StatusProperties>("Incorrect PIN (1 attempt remaining).",
+                                                 typeid(CardPinException))});
+    m.insert({0x63C2,
+              std::make_shared<StatusProperties>("Incorrect PIN (2 attempt remaining).",
+                                                 typeid(CardPinException))});
+    m.insert({0x6983,
+              std::make_shared<StatusProperties>("Presentation rejected (PIN is blocked).",
+                                                 typeid(CardPinException))});
+    m.insert({0x6D00,
+              std::make_shared<StatusProperties>("PIN function not present.",
+                                                 typeid(CardIllegalParameterException))});
+
+    return m;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>&
+    CmdCardVerifyPin::getStatusTable() const
 {
     return STATUS_TABLE;
 }

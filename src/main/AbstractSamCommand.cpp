@@ -28,20 +28,7 @@ namespace card {
 namespace calypso {
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>
-    AbstractSamCommand::STATUS_TABLE = {
-    {0x6D00,
-     std::make_shared<StatusProperties>("Instruction unknown.",
-                                        typeid(CalypsoSamIllegalParameterException))},
-    {0x6E00,
-     std::make_shared<StatusProperties>("Class not supported.",
-                                        typeid(CalypsoSamIllegalParameterException))}
-};
-
-const std::map<const int, const std::shared_ptr<StatusProperties>>&
-    AbstractSamCommand::getStatusTable() const
-{
-    return STATUS_TABLE;
-}
+    AbstractSamCommand::STATUS_TABLE = initStatusTable();
 
 AbstractSamCommand::AbstractSamCommand(const CalypsoSamCommand& commandRef)
 : AbstractApduCommand(commandRef) {}
@@ -51,7 +38,7 @@ const CalypsoSamCommand& AbstractSamCommand::getCommandRef() const
     return dynamic_cast<const CalypsoSamCommand&>(AbstractApduCommand::getCommandRef());
 }
 
-const std::shared_ptr<CalypsoApduCommandException> AbstractSamCommand::buildCommandException(
+const CalypsoApduCommandException AbstractSamCommand::buildCommandException(
     const std::type_info& exceptionClass,
     const std::string& message,
     const CardCommand& commandRef,
@@ -62,21 +49,21 @@ const std::shared_ptr<CalypsoApduCommandException> AbstractSamCommand::buildComm
     const auto sw = std::make_shared<int>(statusWord);
 
     if (exceptionClass == typeid(CalypsoSamAccessForbiddenException)) {
-        return std::make_shared<CalypsoSamAccessForbiddenException>(message, command, sw);
+        return CalypsoSamAccessForbiddenException(message, command, sw);
     } else if (exceptionClass == typeid(CalypsoSamCounterOverflowException)) {
-        return std::make_shared<CalypsoSamCounterOverflowException>(message, command, sw);
+        return CalypsoSamCounterOverflowException(message, command, sw);
     } else if (exceptionClass == typeid(CalypsoSamDataAccessException)) {
-        return std::make_shared<CalypsoSamDataAccessException>(message, command, sw);
+        return CalypsoSamDataAccessException(message, command, sw);
     } else if (exceptionClass == typeid(CalypsoSamIllegalArgumentException)) {
-        return std::make_shared<CalypsoSamIllegalArgumentException>(message, command);
+        return CalypsoSamIllegalArgumentException(message, command);
     } else if (exceptionClass == typeid(CalypsoSamIllegalParameterException)) {
-        return std::make_shared<CalypsoSamIllegalParameterException>(message, command, sw);
+        return CalypsoSamIllegalParameterException(message, command, sw);
     } else if (exceptionClass == typeid(CalypsoSamIncorrectInputDataException)) {
-        return std::make_shared<CalypsoSamIncorrectInputDataException>(message, command, sw);
+        return CalypsoSamIncorrectInputDataException(message, command, sw);
     } else if (exceptionClass == typeid(CalypsoSamSecurityDataException)) {
-        return std::make_shared<CalypsoSamSecurityDataException>(message, command, sw);
+        return CalypsoSamSecurityDataException(message, command, sw);
     } else {
-        return std::make_shared<CalypsoSamUnknownStatusException>(message, command, sw);
+        return CalypsoSamUnknownStatusException(message, command, sw);
     }
 }
 
@@ -90,9 +77,31 @@ void AbstractSamCommand::checkStatus()
 {
     try {
         AbstractApduCommand::checkStatus();
-    } catch (CalypsoApduCommandException& e) {
-        throw dynamic_cast<CalypsoSamCommandException&>(e);
+    } catch (const CalypsoApduCommandException& e) {
+        throw static_cast<const CalypsoSamCommandException&>(e);
     }
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    AbstractSamCommand::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6D00,
+              std::make_shared<StatusProperties>("Instruction unknown.",
+                                                 typeid(CalypsoSamIllegalParameterException))});
+    m.insert({0x6E00,
+              std::make_shared<StatusProperties>("Class not supported.",
+                                                 typeid(CalypsoSamIllegalParameterException))});
+
+    return m;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>&
+    AbstractSamCommand::getStatusTable() const
+{
+    return STATUS_TABLE;
 }
 
 }

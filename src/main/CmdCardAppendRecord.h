@@ -113,6 +113,11 @@ private:
      *
      */
     const std::vector<uint8_t> mData;
+
+    /**
+     *
+     */
+    static const std::map<const int, const std::shared_ptr<StatusProperties>> initStatusTable();
 };
 
 }

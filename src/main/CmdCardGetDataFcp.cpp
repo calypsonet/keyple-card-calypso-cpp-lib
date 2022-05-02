@@ -30,22 +30,8 @@ using namespace keyple::core::util::cpp::exception;
 
 const CalypsoCardCommand CmdCardGetDataFcp::mCommand = CalypsoCardCommand::GET_DATA;
 const int CmdCardGetDataFcp::TAG_PROPRIETARY_INFORMATION = 0x85;
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardGetDataFcp::STATUS_TABLE =
-{
-    {
-        0x6A88,
-        std::make_shared<StatusProperties>("Data object not found (optional mode not available).",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6A82,
-        std::make_shared<StatusProperties>("File not found.",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6B00,
-        std::make_shared<StatusProperties>("P1 or P2 value not supported.",
-                                           typeid(CardDataAccessException))
-    }
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardGetDataFcp::STATUS_TABLE = initStatusTable();
 
 CmdCardGetDataFcp::CmdCardGetDataFcp(const CalypsoCardClass calypsoCardClass)
 : AbstractCardCommand(mCommand)
@@ -82,6 +68,25 @@ const std::vector<uint8_t>& CmdCardGetDataFcp::getProprietaryInformation()
     return mProprietaryInformation;
 }
 
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardGetDataFcp::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6A88,
+              std::make_shared<StatusProperties>("Data object not found (optional mode not " \
+                                                 "available).",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6A82,
+              std::make_shared<StatusProperties>("File not found.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6B00,
+              std::make_shared<StatusProperties>("P1 or P2 value not supported.",
+                                                 typeid(CardDataAccessException))});
+
+    return m;
+}
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&
     CmdCardGetDataFcp::getStatusTable() const

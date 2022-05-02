@@ -215,6 +215,11 @@ private:
      *
      */
     std::shared_ptr<SvDebitLogRecord> mDebitLog;
+
+    /**
+     *
+     */
+    static const std::map<const int, const std::shared_ptr<StatusProperties>> initStatusTable();
 };
 
 }

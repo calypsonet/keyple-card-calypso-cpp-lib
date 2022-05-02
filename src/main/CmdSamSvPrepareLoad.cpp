@@ -40,29 +40,7 @@ using namespace keyple::core::util::cpp::exception;
 const CalypsoSamCommand CmdSamSvPrepareLoad::mCommand = CalypsoSamCommand::SV_PREPARE_LOAD;
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>
-    CmdSamSvPrepareLoad::STATUS_TABLE = {
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Lc value not supported.",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Preconditions not satisfied.",
-                                           typeid(CalypsoSamAccessForbiddenException))
-    }, {
-        0x6A00,
-        std::make_shared<StatusProperties>("Incorrect P1 or P2",
-                                           typeid(CalypsoSamIllegalParameterException))
-    }, {
-        0x6A80,
-        std::make_shared<StatusProperties>("Incorrect incoming data.",
-                                           typeid(CalypsoSamIncorrectInputDataException))
-    }, {
-        0x6A83,
-        std::make_shared<StatusProperties>("Record not found: ciphering key not found",
-                                           typeid(CalypsoSamDataAccessException))
-    }
-};
+    CmdSamSvPrepareLoad::STATUS_TABLE = initStatusTable();
 
 CmdSamSvPrepareLoad::CmdSamSvPrepareLoad(const CalypsoSam::ProductType productType,
                                          const std::vector<uint8_t>& svGetHeader,
@@ -86,6 +64,31 @@ CmdSamSvPrepareLoad::CmdSamSvPrepareLoad(const CalypsoSam::ProductType productTy
     setApduRequest(
         std::make_shared<ApduRequestAdapter>(
             ApduUtil::build(cla, mCommand.getInstructionByte(), p1, p2, data)));
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamSvPrepareLoad::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractSamCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Lc value not supported.",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Preconditions not satisfied.",
+                                                 typeid(CalypsoSamAccessForbiddenException))});
+    m.insert({0x6A00,
+              std::make_shared<StatusProperties>("Incorrect P1 or P2",
+                                                 typeid(CalypsoSamIllegalParameterException))});
+    m.insert({0x6A80,
+              std::make_shared<StatusProperties>("Incorrect incoming data.",
+                                                 typeid(CalypsoSamIncorrectInputDataException))});
+    m.insert({0x6A83,
+              std::make_shared<StatusProperties>("Record not found: ciphering key not found",
+                                                 typeid(CalypsoSamDataAccessException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

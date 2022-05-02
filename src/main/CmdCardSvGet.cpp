@@ -38,30 +38,8 @@ namespace calypso {
 using namespace keyple::core::util;
 
 const CalypsoCardCommand CmdCardSvGet::mCommand = CalypsoCardCommand::SV_GET;
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardSvGet::STATUS_TABLE = {
-    {
-        0x6982,
-        std::make_shared<StatusProperties>("Security conditions not fulfilled.",
-                                           typeid(CardSecurityContextException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Preconditions not satisfied (a store value operation " \
-                                           "was already done in the current session).",
-                                           typeid(CalypsoSamAccessForbiddenException))
-    }, {
-        0x6A81,
-        std::make_shared<StatusProperties>("Incorrect P1 or P2.",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6A86,
-        std::make_shared<StatusProperties>("Le inconsistent with P2.",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6D00,
-        std::make_shared<StatusProperties>("SV function not present.",
-                                           typeid(CardIllegalParameterException))
-    }
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardSvGet::STATUS_TABLE = initStatusTable();
 
 CmdCardSvGet::CmdCardSvGet(const CalypsoCardClass calypsoCardClass,
                            const std::shared_ptr<CalypsoCard> calypsoCard,
@@ -179,6 +157,33 @@ const std::shared_ptr<SvLoadLogRecord> CmdCardSvGet::getLoadLog() const
 const std::shared_ptr<SvDebitLogRecord> CmdCardSvGet::getDebitLog() const
 {
     return mDebitLog;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardSvGet::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6982,
+              std::make_shared<StatusProperties>("Security conditions not fulfilled.",
+                                                 typeid(CardSecurityContextException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Preconditions not satisfied (a store value " \
+                                                 "operation was already done in the current " \
+                                                 "session).",
+                                                 typeid(CalypsoSamAccessForbiddenException))});
+    m.insert({0x6A81,
+              std::make_shared<StatusProperties>("Incorrect P1 or P2.",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6A86,
+              std::make_shared<StatusProperties>("Le inconsistent with P2.",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6D00,
+              std::make_shared<StatusProperties>("SV function not present.",
+                                                 typeid(CardIllegalParameterException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>& CmdCardSvGet::getStatusTable()

@@ -33,40 +33,7 @@ using namespace keyple::core::util::cpp;
 
 const CalypsoCardCommand CmdCardReadRecords::mCommand = CalypsoCardCommand::READ_RECORDS;
 const std::map<const int, const std::shared_ptr<StatusProperties>>
-    CmdCardReadRecords::STATUS_TABLE = {
-    {
-        0x6981,
-        std::make_shared<StatusProperties>("Command forbidden on binary files",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6982,
-        std::make_shared<StatusProperties>("Security conditions not fulfilled (PIN code not " \
-                                           "presented, encryption required).",
-                                           typeid(CardSecurityContextException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Access forbidden (Never access mode, stored value log" \
-                                           " file and a stored value operation was done during " \
-                                           "the current session).",
-                                           typeid(CardAccessForbiddenException))
-    }, {
-        0x6986,
-        std::make_shared<StatusProperties>("Command not allowed (no current EF)",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6A82,
-        std::make_shared<StatusProperties>("File not found",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6A83,
-        std::make_shared<StatusProperties>("Record not found (record index is 0, or above NumRec",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6B00,
-        std::make_shared<StatusProperties>("P2 value not supported",
-                                           typeid(CardIllegalParameterException))
-    }
-};
+    CmdCardReadRecords::STATUS_TABLE = initStatusTable();
 
 CmdCardReadRecords::CmdCardReadRecords(const CalypsoCardClass calypsoCardClass,
                                        const int sfi,
@@ -102,6 +69,41 @@ CmdCardReadRecords::CmdCardReadRecords(const CalypsoCardClass calypsoCardClass,
 bool CmdCardReadRecords::isSessionBufferUsed() const
 {
     return false;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardReadRecords::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6981,
+              std::make_shared<StatusProperties>("Command forbidden on binary files",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6982,
+              std::make_shared<StatusProperties>("Security conditions not fulfilled (PIN code " \
+                                                 "not presented, encryption required).",
+                                                 typeid(CardSecurityContextException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Access forbidden (Never access mode, stored " \
+                                                 "value log file and a stored value operation was" \
+                                                 " done during the current session).",
+                                                 typeid(CardAccessForbiddenException))});
+    m.insert({0x6986,
+              std::make_shared<StatusProperties>("Command not allowed (no current EF)",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6A82,
+              std::make_shared<StatusProperties>("File not found",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6A83,
+              std::make_shared<StatusProperties>("Record not found (record index is 0, or above " \
+                                                 "NumRec",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6B00,
+              std::make_shared<StatusProperties>("P2 value not supported",
+                                                 typeid(CardIllegalParameterException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

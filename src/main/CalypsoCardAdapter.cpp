@@ -123,8 +123,8 @@ void CalypsoCardAdapter::initializeWithFci(
      * Parse card FCI - to retrieve DF Name (AID), Serial Number, &amp; StartupInfo
      * CL-SEL-TLVSTRUC.1
      */
-    auto& cmdCardGetDataFci = std::make_shared<CmdCardGetDataFci>()
-                                 ->setApduResponse(selectApplicationResponse);
+    auto cardGetDataFci = std::make_shared<CmdCardGetDataFci>();
+    const auto& cmdCardGetDataFci = cardGetDataFci->setApduResponse(selectApplicationResponse);
 
     if (!cmdCardGetDataFci.isValidCalypsoFCI()) {
         throw IllegalArgumentException("Bad FCI format.");

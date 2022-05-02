@@ -31,14 +31,8 @@ using namespace keyple::core::util::cpp::exception;
 
 const CalypsoSamCommand CmdSamGetChallenge::mCommand = CalypsoSamCommand::DIGEST_INIT;
 
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdSamGetChallenge::STATUS_TABLE
-= {
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Incorrect Lc.",
-                                           typeid(CalypsoSamIllegalParameterException))
-    }
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamGetChallenge::STATUS_TABLE = initStatusTable();
 
 CmdSamGetChallenge::CmdSamGetChallenge(const CalypsoSam::ProductType productType,
                                        const uint8_t expectedResponseLength)
@@ -61,6 +55,19 @@ CmdSamGetChallenge::CmdSamGetChallenge(const CalypsoSam::ProductType productType
 const std::vector<uint8_t> CmdSamGetChallenge::getChallenge() const
 {
     return isSuccessful() ? getApduResponse()->getDataOut() : std::vector<uint8_t>();
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamGetChallenge::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractSamCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Incorrect Lc.",
+                                                 typeid(CalypsoSamIllegalParameterException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

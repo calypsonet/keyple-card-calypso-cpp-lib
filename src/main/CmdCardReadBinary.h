@@ -112,6 +112,11 @@ private:
      *
      */
     const int mOffset;
+
+    /**
+     *
+     */
+    static const std::map<const int, const std::shared_ptr<StatusProperties>> initStatusTable();
 };
 
 }

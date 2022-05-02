@@ -34,51 +34,7 @@ using namespace keyple::core::util;
 using namespace keyple::core::util::cpp;
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>
-    CmdCardIncreaseOrDecrease::STATUS_TABLE = {
-    {
-        0x6400,
-        std::make_shared<StatusProperties>("Too many modifications in session.",
-                                           typeid(CardSessionBufferOverflowException))
-    }, {
-        0x6700,
-        std::make_shared<StatusProperties>("Lc value not supported.",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6981,
-        std::make_shared<StatusProperties>("The current EF is not a Counters or Simulated Counter" \
-                                           " EF.",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6982,
-        std::make_shared<StatusProperties>("Security conditions not fulfilled (no session, wrong " \
-                                           "key, encryption required).",
-                                           typeid(CardSecurityContextException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Access forbidden (Never access mode, DF is " \
-                                           "invalidated, etc.)",
-                                           typeid(CardAccessForbiddenException))
-    }, {
-        0x6986,
-        std::make_shared<StatusProperties>("Command not allowed (no current EF).",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6A80,
-        std::make_shared<StatusProperties>("Overflow error.",
-                                           typeid(CardDataOutOfBoundsException))
-    }, {
-        0x6A82,
-        std::make_shared<StatusProperties>("File not found.", typeid(CardDataAccessException))
-    }, {
-        0x6B00,
-        std::make_shared<StatusProperties>("P1 or P2 value not supported.",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6103,
-        std::make_shared<StatusProperties>("Successful execution (possible only in ISO7816 T=0).",
-                                           typeid(nullptr))
-    }
-};
+    CmdCardIncreaseOrDecrease::STATUS_TABLE = initStatusTable();
 
 CmdCardIncreaseOrDecrease::CmdCardIncreaseOrDecrease(
   const bool isDecreaseCommand,
@@ -145,6 +101,50 @@ int CmdCardIncreaseOrDecrease::getCounterNumber() const
 int CmdCardIncreaseOrDecrease::getIncDecValue() const
 {
     return mIncDecValue;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardIncreaseOrDecrease::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        CmdCardIncreaseOrDecrease::STATUS_TABLE;
+
+    m.insert({0x6400,
+              std::make_shared<StatusProperties>("Too many modifications in session.",
+                                                 typeid(CardSessionBufferOverflowException))});
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Lc value not supported.",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6981,
+              std::make_shared<StatusProperties>("The current EF is not a Counters or Simulated " \
+                                                 "Counter EF.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6982,
+              std::make_shared<StatusProperties>("Security conditions not fulfilled (no session, " \
+                                                 "wrong key, encryption required).",
+                                                 typeid(CardSecurityContextException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Access forbidden (Never access mode, DF is " \
+                                                 "invalidated, etc.)",
+                                                 typeid(CardAccessForbiddenException))});
+    m.insert({0x6986,
+              std::make_shared<StatusProperties>("Command not allowed (no current EF).",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6A80,
+              std::make_shared<StatusProperties>("Overflow error.",
+                                                 typeid(CardDataOutOfBoundsException))});
+    m.insert({0x6A82,
+              std::make_shared<StatusProperties>("File not found.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6B00,
+              std::make_shared<StatusProperties>("P1 or P2 value not supported.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6103,
+              std::make_shared<StatusProperties>("Successful execution (possible only in ISO7816 " \
+                                                 "T=0).",
+                                                 typeid(nullptr))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

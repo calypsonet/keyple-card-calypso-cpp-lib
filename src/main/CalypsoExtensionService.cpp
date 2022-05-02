@@ -42,6 +42,7 @@ using namespace keyple::core::common;
 using namespace keyple::core::util;
 
 const std::string CalypsoExtensionService::PRODUCT_TYPE = "productType";
+CalypsoExtensionService CalypsoExtensionService::INSTANCE;
 
 CalypsoExtensionService::CalypsoExtensionService() {}
 

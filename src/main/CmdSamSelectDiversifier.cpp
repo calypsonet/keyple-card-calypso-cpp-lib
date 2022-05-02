@@ -31,17 +31,7 @@ using namespace keyple::core::util::cpp::exception;
 const CalypsoSamCommand CmdSamSelectDiversifier::mCommand = CalypsoSamCommand::SELECT_DIVERSIFIER;
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>
-    CmdSamSelectDiversifier::STATUS_TABLE = {
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Incorrect Lc.",
-                                           typeid(CalypsoSamIllegalParameterException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Preconditions not satisfied: the SAM is locked.",
-                                           typeid(CalypsoSamAccessForbiddenException))
-    }
-};
+    CmdSamSelectDiversifier::STATUS_TABLE = initStatusTable();
 
 CmdSamSelectDiversifier::CmdSamSelectDiversifier(const CalypsoSam::ProductType productType,
                                                  const std::vector<uint8_t>& diversifier)
@@ -58,6 +48,28 @@ CmdSamSelectDiversifier::CmdSamSelectDiversifier(const CalypsoSam::ProductType p
     setApduRequest(
         std::make_shared<ApduRequestAdapter>(
             ApduUtil::build(cla, mCommand.getInstructionByte(), p1, p2, diversifier)));
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamSelectDiversifier::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractSamCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Incorrect Lc.",
+                                                 typeid(CalypsoSamIllegalParameterException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Preconditions not satisfied: the SAM is locked.",
+                                                 typeid(CalypsoSamAccessForbiddenException))});
+
+    return m;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>&
+    CmdSamSelectDiversifier::getStatusTable() const
+{
+    return STATUS_TABLE;
 }
 
 }

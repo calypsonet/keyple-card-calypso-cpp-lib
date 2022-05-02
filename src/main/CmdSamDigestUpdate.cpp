@@ -32,30 +32,8 @@ using namespace keyple::core::util::cpp::exception;
 
 const CalypsoSamCommand CmdSamDigestUpdate::mCommand = CalypsoSamCommand::DIGEST_UPDATE;
 
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdSamDigestUpdate::STATUS_TABLE =
-{
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Incorrect Lc.",
-                                           typeid(CalypsoSamIllegalParameterException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Preconditions not satisfied.",
-                                           typeid(CalypsoSamAccessForbiddenException))
-    }, {
-        0x6A80,
-        std::make_shared<StatusProperties>("Incorrect value in the incoming data: session in " \
-                                           "Rev.3.2 mode with encryption/decryption active and " \
-                                           "not enough data (less than 5 bytes for and odd " \
-                                           "occurrence or less than 2 bytesCalypsoSamIllegalParameterException for an even " \
-                                           "occurrence).",
-                                           typeid(CalypsoSamIncorrectInputDataException))
-    }, {
-        0x6B00,
-        std::make_shared<StatusProperties>("Incorrect P1 or P2.",
-                                           typeid(CalypsoSamIllegalParameterException))
-    }
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamDigestUpdate::STATUS_TABLE = initStatusTable();
 
 CmdSamDigestUpdate::CmdSamDigestUpdate(const CalypsoSam::ProductType productType,
                                        const bool encryptedSession,
@@ -73,6 +51,33 @@ CmdSamDigestUpdate::CmdSamDigestUpdate(const CalypsoSam::ProductType productType
     setApduRequest(
         std::make_shared<ApduRequestAdapter>(
             ApduUtil::build(cla, mCommand.getInstructionByte(), p1, p2, digestData)));
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamDigestUpdate::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractSamCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Incorrect Lc.",
+                                                 typeid(CalypsoSamIllegalParameterException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Preconditions not satisfied.",
+                                                 typeid(CalypsoSamAccessForbiddenException))});
+    m.insert({0x6A80,
+              std::make_shared<StatusProperties>("Incorrect value in the incoming data: session " \
+                                                 "in Rev.3.2 mode with encryption/decryption " \
+                                                 "active and not enough data (less than 5 bytes " \
+                                                 "for and odd occurrence or less than 2 bytes " \
+                                                 "CalypsoSamIllegalParameterException for an even" \
+                                                 " occurrence).",
+                                                 typeid(CalypsoSamIncorrectInputDataException))});
+    m.insert({0x6B00,
+              std::make_shared<StatusProperties>("Incorrect P1 or P2.",
+                                                 typeid(CalypsoSamIllegalParameterException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

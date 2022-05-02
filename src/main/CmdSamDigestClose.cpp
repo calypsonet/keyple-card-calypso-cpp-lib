@@ -28,14 +28,8 @@ using namespace keyple::core::util;
 
 const CalypsoSamCommand CmdSamDigestClose::mCommand = CalypsoSamCommand::DIGEST_CLOSE;
 
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdSamDigestClose::STATUS_TABLE =
-{
-    {
-        0x6985,
-        std::make_shared<StatusProperties>("Preconditions not satisfied.",
-                                           typeid(CalypsoSamAccessForbiddenException))
-    }
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamDigestClose::STATUS_TABLE = initStatusTable();
 
 CmdSamDigestClose::CmdSamDigestClose(const CalypsoSam::ProductType productType,
                                      const uint8_t expectedResponseLength)
@@ -58,6 +52,19 @@ CmdSamDigestClose::CmdSamDigestClose(const CalypsoSam::ProductType productType,
 const std::vector<uint8_t> CmdSamDigestClose::getSignature() const
 {
     return isSuccessful() ? getApduResponse()->getDataOut() : std::vector<uint8_t>();
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamDigestClose::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractSamCommand::STATUS_TABLE;
+
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Preconditions not satisfied.",
+                                                 typeid(CalypsoSamAccessForbiddenException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

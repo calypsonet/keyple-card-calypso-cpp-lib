@@ -40,7 +40,8 @@ using namespace keyple::core::util;
 using namespace keyple::core::util::cpp::exception;
 
 CalypsoSamSelectionAdapter::CalypsoSamSelectionAdapter()
-: mSamCardSelector(std::make_shared<CardSelectorAdapter>()) {}
+: mSamCardSelector(std::make_shared<CardSelectorAdapter>()),
+  mProductType(CalypsoSam::ProductType::UNKNOWN) {}
 
 const std::shared_ptr<CardSelectionRequestSpi> CalypsoSamSelectionAdapter::getCardSelectionRequest()
 {
@@ -70,7 +71,7 @@ const std::shared_ptr<SmartCardSpi> CalypsoSamSelectionAdapter::parse(
     const std::shared_ptr<CardSelectionResponseApi> cardSelectionResponse)
 {
     if (mSamCommands.size() == 1) {
-        /* An unlock command has been requeste */
+        /* An unlock command has been requested */
         if (cardSelectionResponse->getCardResponse() == nullptr ||
             cardSelectionResponse->getCardResponse()->getApduResponses().empty()) {
             throw DesynchronizedExchangesException("Mismatch in the number of requests/responses");

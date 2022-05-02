@@ -38,34 +38,8 @@ using namespace keyple::core::util::cpp::exception;
 
 const CalypsoCardCommand CmdCardSvUndebit::mCommand = CalypsoCardCommand::SV_UNDEBIT;
 
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardSvUndebit::STATUS_TABLE = {
-    {
-        0x6400,
-        std::make_shared<StatusProperties>("Too many modifications in session.",
-                                           typeid(CardSessionBufferOverflowException))
-    }, {
-        0x6700,
-        std::make_shared<StatusProperties>("Lc value not supported.",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6900,
-        std::make_shared<StatusProperties>("Transaction counter is 0 or SV TNum is FFFEh or FFFFh.",
-                                           typeid(CalypsoSamCounterOverflowException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Preconditions not satisfied.",
-                                           typeid(CalypsoSamAccessForbiddenException))
-    }, {
-        0x6988,
-        std::make_shared<StatusProperties>("Incorrect signatureHi.",
-                                           typeid(CardSecurityDataException))
-    }, {
-        0x6200,
-        std::make_shared<StatusProperties>("Successful execution, response data postponed until " \
-                                           "session closing.",
-                                           typeid(nullptr))
-    }
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardSvUndebit::STATUS_TABLE = initStatusTable();
 
 CmdCardSvUndebit::CmdCardSvUndebit(const std::shared_ptr<CalypsoCard> calypsoCard,
                                    const int amount,
@@ -184,6 +158,36 @@ CmdCardSvUndebit& CmdCardSvUndebit::setApduResponse(
 const std::vector<uint8_t> CmdCardSvUndebit::getSignatureLo() const
 {
     return getApduResponse()->getDataOut();
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardSvUndebit::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6400,
+              std::make_shared<StatusProperties>("Too many modifications in session.",
+                                                 typeid(CardSessionBufferOverflowException))});
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Lc value not supported.",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6900,
+              std::make_shared<StatusProperties>("Transaction counter is 0 or SV TNum is FFFEh or" \
+                                                 " FFFFh.",
+                                                 typeid(CalypsoSamCounterOverflowException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Preconditions not satisfied.",
+                                                 typeid(CalypsoSamAccessForbiddenException))});
+    m.insert({0x6988,
+              std::make_shared<StatusProperties>("Incorrect signatureHi.",
+                                                 typeid(CardSecurityDataException))});
+    m.insert({0x6200,
+              std::make_shared<StatusProperties>("Successful execution, response data postponed " \
+                                                 "until session closing.",
+                                                 typeid(nullptr))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

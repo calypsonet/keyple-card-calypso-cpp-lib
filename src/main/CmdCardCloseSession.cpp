@@ -34,27 +34,8 @@ using namespace keyple::core::util;
 using namespace keyple::core::util::cpp;
 
 const CalypsoCardCommand CmdCardCloseSession::mCommand = CalypsoCardCommand::CLOSE_SESSION;
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardCloseSession::STATUS_TABLE
-= {
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Lc signatureLo not supported (e.g. Lc=4 with a " \
-                                           "Revision 3.2 mode for Open Secure Session).",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6B00,
-        std::make_shared<StatusProperties>("P1 or P2 signatureLo not supported.",
-                                           typeid(CardIllegalParameterException))
-    },  {
-        0x6988,
-        std::make_shared<StatusProperties>("incorrect signatureLo.",
-                                           typeid(CardSecurityDataException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("No session was opened.",
-                                           typeid(CardAccessForbiddenException))
-    },
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardCloseSession::STATUS_TABLE = initStatusTable();
 
 CmdCardCloseSession::CmdCardCloseSession(const std::shared_ptr<CalypsoCard> calypsoCard,
                                          const bool ratificationAsked,
@@ -179,6 +160,29 @@ const std::vector<uint8_t>& CmdCardCloseSession::getSignatureLo() const
 const std::vector<uint8_t>& CmdCardCloseSession::getPostponedData() const
 {
     return mPostponedData;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardCloseSession::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Lc signatureLo not supported (e.g. Lc=4 with a " \
+                                                 "Revision 3.2 mode for Open Secure Session).",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6B00,
+              std::make_shared<StatusProperties>("P1 or P2 signatureLo not supported.",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6988,
+              std::make_shared<StatusProperties>("incorrect signatureLo.",
+                                                 typeid(CardSecurityDataException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("No session was opened.",
+                                                 typeid(CardAccessForbiddenException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

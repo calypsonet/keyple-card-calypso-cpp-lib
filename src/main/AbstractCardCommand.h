@@ -60,7 +60,7 @@ public:
      *
      * @since 2.0.1
      */
-    const std::shared_ptr<CalypsoApduCommandException> buildCommandException(
+    const CalypsoApduCommandException buildCommandException(
         const std::type_info& exceptionClass,
         const std::string& message,
         const CardCommand& commandRef,

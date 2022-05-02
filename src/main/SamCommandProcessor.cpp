@@ -65,6 +65,7 @@ const uint8_t SamCommandProcessor::CHALLENGE_LENGTH_REV32 = 0x08;
 const uint8_t SamCommandProcessor::SIGNATURE_LENGTH_REV_INF_32 = 0x04;
 const uint8_t SamCommandProcessor::SIGNATURE_LENGTH_REV32 = 0x08;
 const std::string SamCommandProcessor::UNEXPECTED_EXCEPTION = "An unexpected exception was raised.";
+std::vector<std::vector<uint8_t>> SamCommandProcessor::mCardDigestDataCache;
 
 SamCommandProcessor::SamCommandProcessor(
   const std::shared_ptr<CalypsoCard> calypsoCard,

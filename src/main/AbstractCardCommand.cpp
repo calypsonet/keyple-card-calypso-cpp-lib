@@ -38,7 +38,7 @@ const CalypsoCardCommand& AbstractCardCommand::getCommandRef() const
     return dynamic_cast<const CalypsoCardCommand&>(AbstractApduCommand::getCommandRef());
 }
 
-const std::shared_ptr<CalypsoApduCommandException> AbstractCardCommand::buildCommandException(
+const CalypsoApduCommandException AbstractCardCommand::buildCommandException(
     const std::type_info& exceptionClass,
     const std::string& message,
     const CardCommand& commandRef,
@@ -48,27 +48,27 @@ const std::shared_ptr<CalypsoApduCommandException> AbstractCardCommand::buildCom
     const auto sw = std::make_shared<int>(statusWord);
 
     if (exceptionClass == typeid(CardAccessForbiddenException)) {
-        return std::make_shared<CardAccessForbiddenException>(message, command, sw);
+        return CardAccessForbiddenException(message, command, sw);
     } else if (exceptionClass == typeid(CardDataAccessException)) {
-        return std::make_shared<CardDataAccessException>(message, command, sw);
+        return CardDataAccessException(message, command, sw);
     } else if (exceptionClass == typeid(CardDataOutOfBoundsException)) {
-        return std::make_shared<CardDataOutOfBoundsException>(message, command, sw);
+        return CardDataOutOfBoundsException(message, command, sw);
     } else if (exceptionClass == typeid(CardIllegalArgumentException)) {
-        return std::make_shared<CardIllegalArgumentException>(message, command);
+        return CardIllegalArgumentException(message, command);
     } else if (exceptionClass == typeid(CardIllegalParameterException)) {
-        return std::make_shared<CardIllegalParameterException>(message, command, sw);
+        return CardIllegalParameterException(message, command, sw);
     } else if (exceptionClass == typeid(CardPinException)) {
-        return std::make_shared<CardPinException>(message, command, sw);
+        return CardPinException(message, command, sw);
     } else if (exceptionClass == typeid(CardSecurityContextException)) {
-        return std::make_shared<CardSecurityContextException>(message, command, sw);
+        return CardSecurityContextException(message, command, sw);
     } else if (exceptionClass == typeid(CardSecurityDataException)) {
-        return std::make_shared<CardSecurityDataException>(message, command, sw);
+        return CardSecurityDataException(message, command, sw);
     } else if (exceptionClass == typeid(CardSessionBufferOverflowException)) {
-        return std::make_shared<CardSessionBufferOverflowException>(message, command, sw);
+        return CardSessionBufferOverflowException(message, command, sw);
     } else if (exceptionClass == typeid(CardTerminatedException)) {
-        return std::make_shared<CardTerminatedException>(message, command, sw);
+        return CardTerminatedException(message, command, sw);
     } else {
-        return std::make_shared<CardUnknownStatusException>(message, command, sw);
+        return CardUnknownStatusException(message, command, sw);
     }
 }
 

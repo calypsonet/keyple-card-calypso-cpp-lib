@@ -105,7 +105,7 @@ const std::map<const int, const std::shared_ptr<StatusProperties>>&
     return STATUS_TABLE;
 }
 
-const std::shared_ptr<CalypsoApduCommandException> AbstractApduCommand::buildCommandException(
+const CalypsoApduCommandException AbstractApduCommand::buildCommandException(
     const std::type_info& exceptionClass,
     const std::string& message,
     const CardCommand& commandRef,
@@ -115,13 +115,13 @@ const std::shared_ptr<CalypsoApduCommandException> AbstractApduCommand::buildCom
 
     const auto sw = std::make_shared<int>(statusWord);
 
-    return std::shared_ptr<CardCommandUnknownStatusException>(
-               new CardCommandUnknownStatusException(message, commandRef, sw));
+    return CardCommandUnknownStatusException(message, commandRef, sw);
 }
 
 const std::shared_ptr<StatusProperties> AbstractApduCommand::getStatusWordProperties() const
 {
-    const std::map<const int, const std::shared_ptr<StatusProperties>> table = getStatusTable();
+    const std::map<const int, const std::shared_ptr<StatusProperties>>& table = getStatusTable();
+
     const auto it = getStatusTable().find(mApduResponse->getStatusWord());
 
     return it != table.end() ? it->second : nullptr;

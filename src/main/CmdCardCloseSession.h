@@ -112,7 +112,8 @@ public:
      *
      * @since 2.0.1
      */
-    const std::map<const int, const std::shared_ptr<StatusProperties>>& getStatusTable() const override;
+    const std::map<const int, const std::shared_ptr<StatusProperties>>& getStatusTable() const
+        override;
 
 private:
     /**
@@ -139,6 +140,11 @@ private:
      * The postponed data
      */
     std::vector<uint8_t> mPostponedData;
+
+    /**
+     *
+     */
+    static const std::map<const int, const std::shared_ptr<StatusProperties>> initStatusTable();
 };
 
 }

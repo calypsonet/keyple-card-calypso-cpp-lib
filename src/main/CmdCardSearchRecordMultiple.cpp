@@ -35,54 +35,7 @@ using namespace keyple::core::util;
 using namespace keyple::core::util::cpp;
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>
-    CmdCardSearchRecordMultiple::STATUS_TABLE = {
-    {
-        0x6400,
-        std::make_shared<StatusProperties>("Data Out overflow (outgoing data would be too long).",
-                                           typeid(CardSessionBufferOverflowException))
-    }, {
-        0x6700,
-        std::make_shared<StatusProperties>("Lc value not supported (<4).",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6981,
-        std::make_shared<StatusProperties>("Incorrect EF type: Binary EF.",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6982,
-        std::make_shared<StatusProperties>("Security conditions not fulfilled (PIN code not " \
-                                           "presented, encryption required).",
-                                           typeid(CardSecurityContextException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Access forbidden (Never access mode, Stored Value log" \
-                                           " file and a Stored Value operation was done during " \
-                                           "the current secure session).",
-                                           typeid(CardAccessForbiddenException))
-    }, {
-        0x6986,
-        std::make_shared<StatusProperties>("Incorrect file type: the Current File is not an EF. " \
-                                           "Supersedes 6981h.",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6A80,
-        std::make_shared<StatusProperties>("Incorrect command data (S. Length incompatible with " \
-                                           "Lc, S. Length > RecSize, S. Offset + S. Length > " \
-                                           "RecSize, S. Mask bigger than S. Data).",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6A82,
-        std::make_shared<StatusProperties>("File not found.", typeid(CardDataAccessException))
-    }, {
-        0x6A83,
-        std::make_shared<StatusProperties>("Record not found (record index is 0, or above NumRec).",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6B00,
-        std::make_shared<StatusProperties>("P1 or P2 value not supported.",
-                                           typeid(CardIllegalParameterException))
-    }
-};
+    CmdCardSearchRecordMultiple::STATUS_TABLE = initStatusTable();
 
 CmdCardSearchRecordMultiple::CmdCardSearchRecordMultiple(
   const CalypsoCardClass calypsoCardClass,
@@ -152,6 +105,54 @@ CmdCardSearchRecordMultiple::CmdCardSearchRecordMultiple(
 bool CmdCardSearchRecordMultiple::isSessionBufferUsed() const
 {
     return false;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardSearchRecordMultiple::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6400,
+              std::make_shared<StatusProperties>("Data Out overflow (outgoing data would be too" \
+                                                 " long).",
+                                                 typeid(CardSessionBufferOverflowException))});
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Lc value not supported (<4).",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6981,
+              std::make_shared<StatusProperties>("Incorrect EF type: Binary EF.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6982,
+              std::make_shared<StatusProperties>("Security conditions not fulfilled (PIN code " \
+                                                 "not presented, encryption required).",
+                                                 typeid(CardSecurityContextException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Access forbidden (Never access mode, Stored " \
+                                                 "Value log file and a Stored Value operation was" \
+                                                 "done during the current secure session).",
+                                                 typeid(CardAccessForbiddenException))});
+    m.insert({0x6986,
+              std::make_shared<StatusProperties>("Incorrect file type: the Current File is not " \
+                                                 "an EF. Supersedes 6981h.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6A80,
+              std::make_shared<StatusProperties>("Incorrect command data (S. Length incompatible " \
+                                                 "with Lc, S. Length > RecSize, S. Offset + S. " \
+                                                 "Length > RecSize, S. Mask bigger than S. Data).",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6A82,
+              std::make_shared<StatusProperties>("File not found.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6A83,
+              std::make_shared<StatusProperties>("Record not found (record index is 0, or above " \
+                                                 "NumRec).",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6B00,
+              std::make_shared<StatusProperties>("P1 or P2 value not supported.",
+                                                 typeid(CardIllegalParameterException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

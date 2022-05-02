@@ -37,17 +37,7 @@ const int CmdCardGetDataEfList::DESCRIPTOR_TAG_LENGTH = 8;
 const int CmdCardGetDataEfList::DESCRIPTOR_DATA_LENGTH = 6;
 const CalypsoCardCommand CmdCardGetDataEfList::mCommand = CalypsoCardCommand::GET_DATA;
 const std::map<const int, const std::shared_ptr<StatusProperties>>
-    CmdCardGetDataEfList::STATUS_TABLE = {
-    {
-        0x6A88,
-        std::make_shared<StatusProperties>("Data object not found (optional mode not available).",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6B00,
-        std::make_shared<StatusProperties>("P1 or P2 value not supported.",
-                                           typeid(CardDataAccessException))
-    }
-};
+    CmdCardGetDataEfList::STATUS_TABLE = initStatusTable();
 
 CmdCardGetDataEfList::CmdCardGetDataEfList(const CalypsoCardClass calypsoCardClass)
 : AbstractCardCommand(mCommand)
@@ -64,6 +54,23 @@ CmdCardGetDataEfList::CmdCardGetDataEfList(const CalypsoCardClass calypsoCardCla
 bool CmdCardGetDataEfList::isSessionBufferUsed() const
 {
     return false;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardGetDataEfList::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6A88,
+              std::make_shared<StatusProperties>("Data object not found (optional mode not " \
+                                                 "available).",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6B00,
+              std::make_shared<StatusProperties>("P1 or P2 value not supported.",
+                                                 typeid(CardDataAccessException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

@@ -180,6 +180,11 @@ private:
      * Apdu data array
      */
     std::vector<uint8_t> mDataIn;
+
+    /**
+     *
+     */
+    static const std::map<const int, const std::shared_ptr<StatusProperties>> initStatusTable();
 };
 
 }

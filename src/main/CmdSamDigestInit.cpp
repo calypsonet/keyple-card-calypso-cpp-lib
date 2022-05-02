@@ -34,30 +34,8 @@ using namespace keyple::core::util::cpp::exception;
 
 const CalypsoSamCommand CmdSamDigestInit::mCommand = CalypsoSamCommand::DIGEST_INIT;
 
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdSamDigestInit::STATUS_TABLE =
-{
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Incorrect Lc.",
-                                           typeid(CalypsoSamIllegalParameterException))
-    }, {
-        0x6900,
-        std::make_shared<StatusProperties>("An event counter cannot be incremented.",
-                                           typeid(CalypsoSamCounterOverflowException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Preconditions not satisfied.",
-                                           typeid(CalypsoSamAccessForbiddenException))
-    }, {
-        0x6A00,
-        std::make_shared<StatusProperties>("Incorrect P2.",
-                                           typeid(CalypsoSamIllegalParameterException))
-    }, {
-        0x6A83,
-        std::make_shared<StatusProperties>("Record not found: signing key not found.",
-                                           typeid(CalypsoSamDataAccessException))
-    }
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamDigestInit::STATUS_TABLE = initStatusTable();
 
 CmdSamDigestInit::CmdSamDigestInit(
   const CalypsoSam::ProductType productType,
@@ -99,6 +77,30 @@ CmdSamDigestInit::CmdSamDigestInit(
             ApduUtil::build(cla, mCommand.getInstructionByte(), p1, p2, dataIn)));
 }
 
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamDigestInit::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractSamCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Incorrect Lc.",
+                                                 typeid(CalypsoSamIllegalParameterException))});
+    m.insert({0x6900,
+              std::make_shared<StatusProperties>("An event counter cannot be incremented.",
+                                                 typeid(CalypsoSamCounterOverflowException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Preconditions not satisfied.",
+                                                 typeid(CalypsoSamAccessForbiddenException))});
+    m.insert({0x6A00,
+              std::make_shared<StatusProperties>("Incorrect P2.",
+                                                 typeid(CalypsoSamIllegalParameterException))});
+    m.insert({0x6A83,
+              std::make_shared<StatusProperties>("Record not found: signing key not found.",
+                                                 typeid(CalypsoSamDataAccessException))});
+
+    return m;
+}
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&
     CmdSamDigestInit::getStatusTable() const

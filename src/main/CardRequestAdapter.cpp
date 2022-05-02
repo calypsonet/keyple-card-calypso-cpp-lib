@@ -17,7 +17,7 @@ namespace card {
 namespace calypso {
 
 CardRequestAdapter::CardRequestAdapter(
-  const std::vector<std::shared_ptr<ApduRequestSpi>> apduRequests,
+  const std::vector<std::shared_ptr<ApduRequestSpi>>& apduRequests,
   const bool isStatusCodesVerificationEnabled)
 : mApduRequests(apduRequests),
   mIsStatusCodesVerificationEnabled(isStatusCodesVerificationEnabled) {}

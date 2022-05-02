@@ -100,60 +100,8 @@ const std::vector<uint8_t>& CmdCardOpenSession::SecureSession::getSecureSessionD
 
 /* CMD CARD OPEN SESSIO ------------------------------------------------------------------------- */
 
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardOpenSession::STATUS_TABLE
-= {
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Lc value not supported.",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6900,
-        std::make_shared<StatusProperties>("Transaction Counter is 0",
-                                           typeid(CardTerminatedException))
-    }, {
-        0x6981,
-        std::make_shared<StatusProperties>("Command forbidden (read requested and current EF is " \
-                                           "a Binary file).",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6982,
-        std::make_shared<StatusProperties>("Security conditions not fulfilled (PIN code not " \
-                                           "presented, AES key forbidding the compatibility " \
-                                           "mode, encryption required).",
-                                           typeid(CardSecurityContextException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Access forbidden (Never access mode, Session already" \
-                                           " opened).",
-                                           typeid(CardAccessForbiddenException))
-    }, {
-        0x6986,
-        std::make_shared<StatusProperties>("Command not allowed (read requested and no current " \
-                                           "EF).",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6A81,
-        std::make_shared<StatusProperties>("Wrong key index.",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x6A82,
-        std::make_shared<StatusProperties>("File not found.",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6A83,
-        std::make_shared<StatusProperties>("Record not found (record index is above NumRec).",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6B00,
-        std::make_shared<StatusProperties>("P1 or P2 value not supported (key index incorrect, " \
-                                           "wrong P2).",
-                                           typeid(CardIllegalParameterException))
-    }, {
-        0x61FF,
-        std::make_shared<StatusProperties>("Correct execution (ISO7816 T=0).",
-                                           typeid(nullptr))
-    }
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardOpenSession::STATUS_TABLE = initStatusTable();
 
 CmdCardOpenSession::CmdCardOpenSession(const std::shared_ptr<CalypsoCard> calypsoCard,
                                        const uint8_t debitKeyIndex,
@@ -480,6 +428,55 @@ const std::shared_ptr<uint8_t> CmdCardOpenSession::getSelectedKvc() const
 const std::vector<uint8_t>& CmdCardOpenSession::getRecordDataRead() const
 {
     return mSecureSession->getOriginalData();
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardOpenSession::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Lc value not supported.",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6900,
+              std::make_shared<StatusProperties>("Transaction Counter is 0",
+                                                 typeid(CardTerminatedException))});
+    m.insert({0x6981,
+              std::make_shared<StatusProperties>("Command forbidden (read requested and current " \
+                                                 "EF is a Binary file).",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6982,
+              std::make_shared<StatusProperties>("Security conditions not fulfilled (PIN code " \
+                                                 "not presented, AES key forbidding the " \
+                                                 "compatibility mode, encryption required).",
+                                                 typeid(CardSecurityContextException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Access forbidden (Never access mode, Session " \
+                                                 "already opened).",
+                                                 typeid(CardAccessForbiddenException))});
+    m.insert({0x6986,
+              std::make_shared<StatusProperties>("Command not allowed (read requested and no " \
+                                                 "current EF).",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6A81,
+              std::make_shared<StatusProperties>("Wrong key index.",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x6A82,
+              std::make_shared<StatusProperties>("File not found.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6A83,
+              std::make_shared<StatusProperties>("Record not found (record index is above NumRec).",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6B00,
+              std::make_shared<StatusProperties>("P1 or P2 value not supported (key index " \
+                                                 "incorrect, wrong P2).",
+                                                 typeid(CardIllegalParameterException))});
+    m.insert({0x61FF,
+              std::make_shared<StatusProperties>("Correct execution (ISO7816 T=0).",
+                                                 typeid(nullptr))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

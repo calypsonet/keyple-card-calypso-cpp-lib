@@ -30,23 +30,9 @@ using namespace keyple::core::util;
 using namespace keyple::core::util::cpp::exception;
 
 const CalypsoSamCommand CmdSamUnlock::mCommand = CalypsoSamCommand::UNLOCK;
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamUnlock::STATUS_TABLE = initStatusTable();
 
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdSamUnlock::STATUS_TABLE =
-{
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Incorrect Lc.",
-                                           typeid(CalypsoSamIllegalParameterException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Preconditions not satisfied (SAM not locked?).",
-                                           typeid(CalypsoSamAccessForbiddenException))
-    }, {
-        0x6988,
-        std::make_shared<StatusProperties>("Incorrect UnlockData.",
-                                           typeid(CalypsoSamSecurityDataException))
-    }
-};
 
 CmdSamUnlock::CmdSamUnlock(const CalypsoSam::ProductType productType, const std::vector<uint8_t>& unlockData)
 : AbstractSamCommand(mCommand)
@@ -72,6 +58,24 @@ const std::map<const int, const std::shared_ptr<StatusProperties>>& CmdSamUnlock
     const
 {
     return STATUS_TABLE;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>> CmdSamUnlock::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractSamCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Incorrect Lc.",
+                                                typeid(CalypsoSamIllegalParameterException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Preconditions not satisfied (SAM not locked?).",
+                                                 typeid(CalypsoSamAccessForbiddenException))});
+    m.insert({0x6988,
+              std::make_shared<StatusProperties>("Incorrect UnlockData.",
+                                                 typeid(CalypsoSamSecurityDataException))});
+
+    return m;
 }
 
 }

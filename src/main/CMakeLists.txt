@@ -19,10 +19,9 @@ SET(CALYPSONET_READER_DIR   "../../../calypsonet-terminal-reader-cpp-api")
 SET(CALYPSONET_CALYPSO_DIR  "../../../calypsonet-terminal-calypso-cpp-api")
 SET(KEYPLE_COMMON_DIR       "../../../keyple-common-cpp-api")
 SET(KEYPLE_PLUGIN_DIR       "../../../keyple-plugin-cpp-api")
-SET(KEYPLE_UTIL_DIR         "../../../keyple-util-cpp-lib")
 SET(KEYPLE_SERVICE_DIR      "../../../keyple-service-cpp-lib")
 SET(KEYPLE_RESOURCE_DIR     "../../../keyple-service-resource-cpp-lib")
-SET(KEYPLE_UTIL_LIB         "keypleutilcpplib")
+SET(KEYPLE_UTIL_DIR         "../../../keyple-util-cpp-lib")
 
 INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -52,13 +51,13 @@ INCLUDE_DIRECTORIES(
     ${KEYPLE_PLUGIN_DIR}/src/main/spi/reader/observable/state/processing
     ${KEYPLE_PLUGIN_DIR}/src/main/spi/reader/observable/state/removal
 
-    ${KEYPLE_UTIL_DIR}/src/main
-    ${KEYPLE_UTIL_DIR}/src/main/cpp
-    ${KEYPLE_UTIL_DIR}/src/main/cpp/exception
+    ${KEYPLE_RESOURCE_DIR}/src/main/spi
 
     ${KEYPLE_SERVICE_DIR}/src/main/cpp
 
-    ${KEYPLE_RESOURCE_DIR}/src/main/spi
+    ${KEYPLE_UTIL_DIR}/src/main
+    ${KEYPLE_UTIL_DIR}/src/main/cpp
+    ${KEYPLE_UTIL_DIR}/src/main/cpp/exception
 )
 
 ADD_LIBRARY(
@@ -141,5 +140,3 @@ ADD_LIBRARY(
     ${CMAKE_CURRENT_SOURCE_DIR}/SvDebitLogRecordJsonDeserializerAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SvLoadLogRecordJsonDeserializerAdapter.cpp
 )
-
-TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${KEYPLE_UTIL_LIB})

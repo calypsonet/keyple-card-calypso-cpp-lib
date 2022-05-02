@@ -70,11 +70,10 @@ public:
      *
      * @since 2.0.1
      */
-    const std::shared_ptr<CalypsoApduCommandException> buildCommandException(
-        const std::type_info& exceptionClass,
-        const std::string& message,
-        const CardCommand& commandRef,
-        const int statusWord) const final;
+    const CalypsoApduCommandException buildCommandException(const std::type_info& exceptionClass,
+                                                            const std::string& message,
+                                                            const CardCommand& commandRef,
+                                                            const int statusWord) const final;
 
     /**
      * {@inheritDoc}
@@ -90,6 +89,12 @@ public:
      * @since 2.0.1
      */
     void checkStatus() override;
+
+private:
+    /**
+     *
+     */
+    static const std::map<const int, const std::shared_ptr<StatusProperties>> initStatusTable();
 };
 
 }

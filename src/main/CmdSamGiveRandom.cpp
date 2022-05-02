@@ -29,14 +29,8 @@ using namespace keyple::core::util::cpp::exception;
 
 const CalypsoSamCommand CmdSamGiveRandom::mCommand = CalypsoSamCommand::DIGEST_INIT;
 
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdSamGiveRandom::STATUS_TABLE =
-{
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Incorrect Lc.",
-                                           typeid(CalypsoSamIllegalParameterException))
-    }
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamGiveRandom::STATUS_TABLE = initStatusTable();
 
 CmdSamGiveRandom::CmdSamGiveRandom(const CalypsoSam::ProductType productType,
                                    const std::vector<uint8_t>& random)
@@ -53,6 +47,19 @@ CmdSamGiveRandom::CmdSamGiveRandom(const CalypsoSam::ProductType productType,
     setApduRequest(
         std::make_shared<ApduRequestAdapter>(
             ApduUtil::build(cla, mCommand.getInstructionByte(), p1, p2, random)));
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamGiveRandom::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractSamCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Incorrect Lc.",
+                                                 typeid(CalypsoSamIllegalParameterException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

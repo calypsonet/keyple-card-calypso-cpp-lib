@@ -32,45 +32,7 @@ using namespace keyple::core::util;
 
 const CalypsoCardCommand CmdCardUpdateRecord::mCommand = CalypsoCardCommand::UPDATE_RECORD;
 const std::map<const int, const std::shared_ptr<StatusProperties>>
-    CmdCardUpdateRecord::STATUS_TABLE = {
-    {
-        0x6400,
-        std::make_shared<StatusProperties>("Too many modifications in session.",
-                                           typeid(CardSessionBufferOverflowException))
-    }, {
-        0x6700,
-        std::make_shared<StatusProperties>("Lc value not supported.",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6981,
-        std::make_shared<StatusProperties>("Command forbidden on cyclic files when the record " \
-                                           "exists and is not record 01h and on binary files.",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6982,
-        std::make_shared<StatusProperties>("Security conditions not fulfilled (no session, wrong " \
-                                           "key, encryption required).",
-                                           typeid(CardSecurityContextException))
-    }, {
-        0x6985,
-        std::make_shared<StatusProperties>("Access forbidden (Never access mode, DF is " \
-                                           "invalidated, etc..).",
-                                           typeid(CardAccessForbiddenException))
-    }, {
-        0x6986,
-        std::make_shared<StatusProperties>("Command not allowed (no current EF).",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6A83,
-        std::make_shared<StatusProperties>("Record is not found (record index is 0 or above " \
-                                           "NumRec).",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6B00,
-        std::make_shared<StatusProperties>("P2 value not supported.",
-                                           typeid(CardIllegalParameterException))
-    }
-};
+    CmdCardUpdateRecord::STATUS_TABLE = initStatusTable();
 
 CmdCardUpdateRecord::CmdCardUpdateRecord(const CalypsoCardClass calypsoCardClass,
                                          const uint8_t sfi,
@@ -118,6 +80,45 @@ int CmdCardUpdateRecord::getRecordNumber() const
 const std::vector<uint8_t>& CmdCardUpdateRecord::getData() const
 {
     return mData;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardUpdateRecord::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6400,
+              std::make_shared<StatusProperties>("Too many modifications in session.",
+                                                 typeid(CardSessionBufferOverflowException))});
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Lc value not supported.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6981,
+              std::make_shared<StatusProperties>("Command forbidden on cyclic files when the " \
+                                                 "record exists and is not record 01h and on " \
+                                                 "binary files.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6982,
+              std::make_shared<StatusProperties>("Security conditions not fulfilled (no session, " \
+                                                 "wrong key, encryption required).",
+                                                 typeid(CardSecurityContextException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Access forbidden (Never access mode, DF is " \
+                                                 "invalidated, etc..).",
+                                                 typeid(CardAccessForbiddenException))});
+    m.insert({0x6986,
+              std::make_shared<StatusProperties>("Command not allowed (no current EF).",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6A83,
+              std::make_shared<StatusProperties>("Record is not found (record index is 0 or " \
+                                                 "above NumRec).",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6B00,
+              std::make_shared<StatusProperties>("P2 value not supported.",
+                                                 typeid(CardIllegalParameterException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

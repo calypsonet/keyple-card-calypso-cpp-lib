@@ -27,17 +27,7 @@ using namespace keyple::core::util;
 const CalypsoCardCommand CmdCardGetDataTraceabilityInformation::mCommand =
     CalypsoCardCommand::GET_DATA;
 const std::map<const int, const std::shared_ptr<StatusProperties>>
-    CmdCardGetDataTraceabilityInformation::STATUS_TABLE = {
-    {
-        0x6A88,
-        std::make_shared<StatusProperties>("Data object not found (optional mode not available).",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6B00,
-        std::make_shared<StatusProperties>("P1 or P2 value not supported.",
-                                           typeid(CardDataAccessException))
-    }
-};
+    CmdCardGetDataTraceabilityInformation::STATUS_TABLE = initStatusTable();
 
 CmdCardGetDataTraceabilityInformation::CmdCardGetDataTraceabilityInformation(
     const CalypsoCardClass calypsoCardClass)
@@ -56,6 +46,23 @@ CmdCardGetDataTraceabilityInformation::CmdCardGetDataTraceabilityInformation(
 bool CmdCardGetDataTraceabilityInformation::isSessionBufferUsed() const
 {
     return false;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardGetDataTraceabilityInformation::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6A88,
+              std::make_shared<StatusProperties>("Data object not found (optional mode not " \
+                                                 "available).",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6B00,
+              std::make_shared<StatusProperties>("P1 or P2 value not supported.",
+                                                 typeid(CardDataAccessException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

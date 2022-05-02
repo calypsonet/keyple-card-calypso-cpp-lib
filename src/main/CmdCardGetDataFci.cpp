@@ -32,23 +32,8 @@ const int CmdCardGetDataFci::TAG_DF_NAME = 0x84;
 const int CmdCardGetDataFci::TAG_APPLICATION_SERIAL_NUMBER = 0xC7;
 const int CmdCardGetDataFci::TAG_DISCRETIONARY_DATA = 0x53;
 const CalypsoCardCommand CmdCardGetDataFci::mCommand = CalypsoCardCommand::GET_DATA;
-const std::map<const int, const std::shared_ptr<StatusProperties>> CmdCardGetDataFci::STATUS_TABLE =
-{
-    {
-        0x6A88,
-        std::make_shared<StatusProperties>("Data object not found (optional mode not available).",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6B00,
-        std::make_shared<StatusProperties>("P1 or P2 value not supported.",
-                                           typeid(CardDataAccessException))
-    }, {
-        0x6283,
-        std::make_shared<StatusProperties>("Successful execution, FCI request and DF is " \
-                                           "invalidated.",
-                                           typeid(nullptr))
-    }
-};
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardGetDataFci::STATUS_TABLE = initStatusTable();
 
 CmdCardGetDataFci::CmdCardGetDataFci(const CalypsoCardClass calypsoCardClass)
 : AbstractCardCommand(mCommand), mIsDfInvalidated(false), mIsValidCalypsoFCI(false)
@@ -182,6 +167,27 @@ const std::vector<uint8_t>& CmdCardGetDataFci::getDiscretionaryData() const
 bool CmdCardGetDataFci::isDfInvalidated() const
 {
     return mIsDfInvalidated;
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdCardGetDataFci::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractApduCommand::STATUS_TABLE;
+
+    m.insert({0x6A88,
+              std::make_shared<StatusProperties>("Data object not found (optional mode not " \
+                                                 "available).",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6B00,
+              std::make_shared<StatusProperties>("P1 or P2 value not supported.",
+                                                 typeid(CardDataAccessException))});
+    m.insert({0x6283,
+              std::make_shared<StatusProperties>("Successful execution, FCI request and DF is " \
+                                                 "invalidated.",
+                                                 typeid(nullptr))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&

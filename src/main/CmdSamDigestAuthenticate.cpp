@@ -32,21 +32,7 @@ using namespace keyple::core::util::cpp::exception;
 const CalypsoSamCommand CmdSamDigestAuthenticate::mCommand = CalypsoSamCommand::DIGEST_CLOSE;
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>
-    CmdSamDigestAuthenticate::STATUS_TABLE = {
-    {
-        0x6700,
-        std::make_shared<StatusProperties>("Incorrect Lc.",
-                                           typeid(CalypsoSamIllegalParameterException))
-    },  {
-        0x6985,
-        std::make_shared<StatusProperties>("Preconditions not satisfied.",
-                                           typeid(CalypsoSamAccessForbiddenException))
-    },  {
-        0x6988,
-        std::make_shared<StatusProperties>("Incorrect signature.",
-                                           typeid(CalypsoSamSecurityDataException))
-    }
-};
+    CmdSamDigestAuthenticate::STATUS_TABLE = initStatusTable();
 
 CmdSamDigestAuthenticate::CmdSamDigestAuthenticate(const CalypsoSam::ProductType productType,
                                                    const std::vector<uint8_t>& signature)
@@ -68,6 +54,25 @@ CmdSamDigestAuthenticate::CmdSamDigestAuthenticate(const CalypsoSam::ProductType
     setApduRequest(
         std::make_shared<ApduRequestAdapter>(
             ApduUtil::build(cla, mCommand.getInstructionByte(), p1, p2, signature)));
+}
+
+const std::map<const int, const std::shared_ptr<StatusProperties>>
+    CmdSamDigestAuthenticate::initStatusTable()
+{
+    std::map<const int, const std::shared_ptr<StatusProperties>> m =
+        AbstractSamCommand::STATUS_TABLE;
+
+    m.insert({0x6700,
+              std::make_shared<StatusProperties>("Incorrect Lc.",
+                                                 typeid(CalypsoSamIllegalParameterException))});
+    m.insert({0x6985,
+              std::make_shared<StatusProperties>("Preconditions not satisfied.",
+                                                 typeid(CalypsoSamAccessForbiddenException))});
+    m.insert({0x6988,
+              std::make_shared<StatusProperties>("Incorrect signature.",
+                                                 typeid(CalypsoSamSecurityDataException))});
+
+    return m;
 }
 
 const std::map<const int, const std::shared_ptr<StatusProperties>>&
