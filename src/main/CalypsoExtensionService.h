@@ -77,7 +77,7 @@ public:
      * @return The instance of CalypsoExtensionService.
      * @since 2.0.0
      */
-    static CalypsoExtensionService& getInstance();
+    static std::shared_ptr<CalypsoExtensionService> getInstance();
 
     /**
      * {@inheritDoc}
@@ -187,7 +187,7 @@ private:
     /**
      * Singleton instance of CalypsoExtensionService
      */
-    static CalypsoExtensionService INSTANCE;
+    static std::shared_ptr<CalypsoExtensionService> mInstance;
 
 
     /**

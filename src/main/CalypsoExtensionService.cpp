@@ -42,13 +42,17 @@ using namespace keyple::core::common;
 using namespace keyple::core::util;
 
 const std::string CalypsoExtensionService::PRODUCT_TYPE = "productType";
-CalypsoExtensionService CalypsoExtensionService::INSTANCE;
+std::shared_ptr<CalypsoExtensionService> CalypsoExtensionService::mInstance;
 
 CalypsoExtensionService::CalypsoExtensionService() {}
 
-CalypsoExtensionService& CalypsoExtensionService::getInstance()
+std::shared_ptr<CalypsoExtensionService> CalypsoExtensionService::getInstance()
 {
-    return INSTANCE;
+    if (mInstance == nullptr) {
+        mInstance = std::shared_ptr<CalypsoExtensionService>(new CalypsoExtensionService());
+    }
+
+    return mInstance;
 }
 
 const std::string& CalypsoExtensionService::getReaderApiVersion() const

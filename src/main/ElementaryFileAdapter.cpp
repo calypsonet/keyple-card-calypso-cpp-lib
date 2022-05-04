@@ -17,7 +17,7 @@ namespace card {
 namespace calypso {
 
 ElementaryFileAdapter::ElementaryFileAdapter(const uint8_t sfi)
-: mSfi(sfi), mData(std::shared_ptr<FileDataAdapter>()) {}
+: mSfi(sfi), mData(std::make_shared<FileDataAdapter>()) {}
 
 ElementaryFileAdapter::ElementaryFileAdapter(const std::shared_ptr<ElementaryFile> source)
 : mSfi(source->getSfi()),
